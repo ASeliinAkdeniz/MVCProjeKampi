@@ -1,0 +1,74 @@
+﻿@model EntityLayer.Concrete.Writer
+@{
+    ViewBag.Title = "Profilim";
+    Layout = "~/Views/Shared/_WriterLayout.cshtml";
+}
+
+<div class="max-w-2xl mx-auto flex flex-col gap-lg">
+
+    <!-- Profil önizleme kartı -->
+    <div class="bg-surface-container-lowest rounded-xl p-lg border-4 border-nude-lila-border shadow-[0_4px_16px_rgba(75,64,56,0.06)] flex items-center gap-lg">
+        @if (!string.IsNullOrEmpty(Model.WriterImage))
+        {
+            <img src="@Model.WriterImage" alt="@Model.WriterName" class="w-20 h-20 rounded-full object-cover border-4 border-nude-lila-border" />
+        }
+        else
+        {
+            <div class="w-20 h-20 rounded-full flex items-center justify-center border-4 border-nude-lila-border bg-nude-lila-bg text-nude-lila-text font-headline-md">
+                @(!string.IsNullOrEmpty(Model.WriterName) ? Model.WriterName.Substring(0,1).ToUpper() : "?")
+            </div>
+        }
+        <div>
+            <h1 class="font-headline-md text-headline-md text-primary">@Model.WriterName @Model.WriterSurname</h1>
+            <p class="text-on-surface-variant font-label-md">@Model.WriterTitle</p>
+        </div>
+    </div>
+
+    <!-- Düzenleme formu -->
+    <div class="bg-surface-container-lowest rounded-xl p-lg shadow-[0_4px_16px_rgba(75,64,56,0.06)]">
+        <h2 class="font-headline-sm text-headline-sm text-on-surface mb-lg">Profilini Düzenle</h2>
+
+        @using (Html.BeginForm("WriterProfile", "WriterPanel", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(x => x.WriterID)
+            @Html.HiddenFor(x => x.WriterPassword)
+            <div class="flex flex-col gap-md">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+                    <div>
+                        <label class="block font-label-md text-on-surface-variant mb-xs">Ad</label>
+                        @Html.TextBoxFor(x => x.WriterName, new { @class = "w-full px-4 py-2.5 bg-surface-container-lowest border border-[#EFE6DD] rounded-xl font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" })
+                    </div>
+                    <div>
+                        <label class="block font-label-md text-on-surface-variant mb-xs">Soyad</label>
+                        @Html.TextBoxFor(x => x.WriterSurname, new { @class = "w-full px-4 py-2.5 bg-surface-container-lowest border border-[#EFE6DD] rounded-xl font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" })
+                    </div>
+                </div>
+                <div>
+                    <label class="block font-label-md text-on-surface-variant mb-xs">Mail</label>
+                    @Html.TextBoxFor(x => x.WriterMail, new { @class = "w-full px-4 py-2.5 bg-surface-container-lowest border border-[#EFE6DD] rounded-xl font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" })
+                </div>
+                <div>
+                    <label class="block font-label-md text-on-surface-variant mb-xs">Ünvan</label>
+                    @Html.TextBoxFor(x => x.WriterTitle, new { @class = "w-full px-4 py-2.5 bg-surface-container-lowest border border-[#EFE6DD] rounded-xl font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" })
+                </div>
+                <div>
+                    <label class="block font-label-md text-on-surface-variant mb-xs">Profil Foto Linki</label>
+                    @Html.TextBoxFor(x => x.WriterImage, new { @class = "w-full px-4 py-2.5 bg-surface-container-lowest border border-[#EFE6DD] rounded-xl font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" })
+                </div>
+                <div>
+                    <label class="block font-label-md text-on-surface-variant mb-xs">Hakkında</label>
+                    @Html.TextAreaFor(x => x.WriterAbout, new { rows = 3, @class = "w-full px-4 py-2.5 bg-surface-container-lowest border border-[#EFE6DD] rounded-xl font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" })
+                </div>
+                <div>
+                    <label class="block font-label-md text-on-surface-variant mb-xs">Yeni Şifre <span class="text-outline">(değiştirmek istemiyorsan boş bırak)</span></label>
+                    <input type="password" name="yeniSifre" placeholder="••••••••"
+                           class="w-full px-4 py-2.5 bg-surface-container-lowest border border-[#EFE6DD] rounded-xl font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+                </div>
+                <div class="flex justify-end mt-sm">
+                    <button type="submit" class="px-lg py-2.5 bg-primary text-on-primary font-label-md rounded-full hover:brightness-110 transition-all">Değişiklikleri Kaydet</button>
+                </div>
+            </div>
+        }
+    </div>
+</div>

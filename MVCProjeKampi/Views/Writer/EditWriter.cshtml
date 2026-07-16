@@ -1,0 +1,59 @@
+﻿@model EntityLayer.Concrete.Writer
+@{
+    ViewBag.Title = "Yazar Düzenle";
+    Layout = "~/Views/Shared/_adminLayout.cshtml";
+}
+
+<div class="max-w-2xl mx-auto">
+    <div class="bg-surface-container-lowest rounded-xl p-lg border-4 border-nude-orange-border shadow-[0_4px_16px_rgba(75,64,56,0.06)]">
+        <div class="flex items-center gap-sm mb-lg">
+            <span class="material-symbols-outlined text-nude-orange-text">edit</span>
+            <h2 class="font-headline-md text-headline-md text-nude-orange-text">Yazarı Düzenle</h2>
+        </div>
+
+        @using (Html.BeginForm("EditWriter", "Writer", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(x => x.WriterID)
+            <div class="flex flex-col gap-md">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+                    <div>
+                        <label class="block font-label-md text-on-surface-variant mb-xs">Ad</label>
+                        @Html.TextBoxFor(x => x.WriterName, new { @class = "w-full px-4 py-2.5 bg-surface-container-lowest border border-[#EFE6DD] rounded-xl font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" })
+                    </div>
+                    <div>
+                        <label class="block font-label-md text-on-surface-variant mb-xs">Soyad</label>
+                        @Html.TextBoxFor(x => x.WriterSurname, new { @class = "w-full px-4 py-2.5 bg-surface-container-lowest border border-[#EFE6DD] rounded-xl font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" })
+                    </div>
+                </div>
+                <div>
+                    <label class="block font-label-md text-on-surface-variant mb-xs">Mail</label>
+                    @Html.TextBoxFor(x => x.WriterMail, new { @class = "w-full px-4 py-2.5 bg-surface-container-lowest border border-[#EFE6DD] rounded-xl font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" })
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+                    <div>
+                        <label class="block font-label-md text-on-surface-variant mb-xs">Ünvan</label>
+                        @Html.TextBoxFor(x => x.WriterTitle, new { @class = "w-full px-4 py-2.5 bg-surface-container-lowest border border-[#EFE6DD] rounded-xl font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" })
+                    </div>
+                    <div>
+                        <label class="block font-label-md text-on-surface-variant mb-xs">Görsel Linki</label>
+                        @Html.TextBoxFor(x => x.WriterImage, new { @class = "w-full px-4 py-2.5 bg-surface-container-lowest border border-[#EFE6DD] rounded-xl font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" })
+                    </div>
+                </div>
+                <div>
+                    <label class="block font-label-md text-on-surface-variant mb-xs">Hakkında</label>
+                    @Html.TextAreaFor(x => x.WriterAbout, new { rows = 3, @class = "w-full px-4 py-2.5 bg-surface-container-lowest border border-[#EFE6DD] rounded-xl font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" })
+                </div>
+                <div>
+                    <label class="block font-label-md text-on-surface-variant mb-xs">Yeni Şifre <span class="text-outline">(değiştirmek istemiyorsan boş bırak)</span></label>
+                    <input type="password" name="yeniSifre" placeholder="••••••••"
+                           class="w-full px-4 py-2.5 bg-surface-container-lowest border border-[#EFE6DD] rounded-xl font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+                </div>
+                <div class="flex justify-end gap-sm mt-sm">
+                    <a href="/Writer/Index" class="px-lg py-2.5 border border-[#EFE6DD] text-on-surface-variant font-label-md rounded-full hover:bg-surface-container transition-all">Vazgeç</a>
+                    <button type="submit" class="px-lg py-2.5 bg-primary text-on-primary font-label-md rounded-full hover:brightness-110 transition-all">Güncelle</button>
+                </div>
+            </div>
+        }
+    </div>
+</div>

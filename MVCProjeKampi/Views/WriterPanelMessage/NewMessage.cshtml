@@ -1,0 +1,40 @@
+﻿@model EntityLayer.Concrete.Message
+@{
+    ViewBag.Title = "Yeni Mesaj";
+    Layout = "~/Views/Shared/_WriterLayout.cshtml";
+}
+<div class="grid grid-cols-1 md:grid-cols-12 gap-lg">
+    @Html.Action("MessageListMenu", "WriterPanelMessage")
+    <div class="md:col-span-9">
+        <h1 class="font-headline-md text-headline-md text-primary mb-lg">Yeni Mesaj</h1>
+        <div class="bg-surface-container-lowest rounded-xl p-lg border-4 border-nude-lila-border shadow-[0_4px_16px_rgba(75,64,56,0.06)]">
+            @using (Html.BeginForm("NewMessage", "WriterPanelMessage", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <div class="flex flex-col gap-md">
+                    <div>
+                        <label class="block font-label-md text-on-surface-variant mb-xs">Alıcı Mail</label>
+                        @Html.TextBoxFor(x => x.ReceiverMail, new { @class = "w-full px-4 py-2.5 bg-surface-container-lowest border border-[#EFE6DD] rounded-xl font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all", placeholder = "kime@mail.com" })
+                        @Html.ValidationMessageFor(x => x.ReceiverMail, "", new { @class = "text-nude-pink-text text-label-sm" })
+                    </div>
+                    <div>
+                        <label class="block font-label-md text-on-surface-variant mb-xs">Konu</label>
+                        @Html.TextBoxFor(x => x.Subject, new { @class = "w-full px-4 py-2.5 bg-surface-container-lowest border border-[#EFE6DD] rounded-xl font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all", placeholder = "Mesaj konusu" })
+                        @Html.ValidationMessageFor(x => x.Subject, "", new { @class = "text-nude-pink-text text-label-sm" })
+                    </div>
+                    <div>
+                        <label class="block font-label-md text-on-surface-variant mb-xs">Mesaj</label>
+                        @Html.TextAreaFor(x => x.MessageContent, new { rows = 6, @class = "w-full px-4 py-2.5 bg-surface-container-lowest border border-[#EFE6DD] rounded-xl font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all", placeholder = "Mesajını yaz..." })
+                        @Html.ValidationMessageFor(x => x.MessageContent, "", new { @class = "text-nude-pink-text text-label-sm" })
+                    </div>
+                    <div class="flex justify-end gap-sm mt-sm">
+                        <a href="/WriterPanelMessage/Inbox" class="px-lg py-2.5 border border-[#EFE6DD] text-on-surface-variant font-label-md rounded-full hover:bg-surface-container transition-all">Vazgeç</a>
+                        <button type="submit" class="flex items-center gap-xs px-lg py-2.5 bg-primary text-on-primary font-label-md rounded-full hover:brightness-110 transition-all">
+                            <span class="material-symbols-outlined text-[18px]">send</span> Gönder
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

@@ -1,0 +1,119 @@
+﻿<!DOCTYPE html>
+<html class="light" lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>@ViewBag.Title - Tatlı Sözlük Yönetim</title>
+    <link href="~/Content/tailwind.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&family=Nunito+Sans:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+</head>
+<body class="font-body-md text-on-surface antialiased">
+    <div class="flex min-h-screen">
+
+        <!-- SOL SIDEBAR (lila) -->
+        <aside class="w-64 shrink-0 flex flex-col sticky top-0 h-screen" style="background:#6B5A7A;">
+            <!-- Logo -->
+            <a href="/Panel/Index" class="flex items-center gap-sm px-lg h-16 text-on-primary" style="border-bottom:1px solid rgba(255,255,255,0.12);">
+                <span class="material-symbols-outlined">menu_book</span>
+                <span class="font-headline-md font-bold" style="font-size:20px;">Tatlı Sözlük</span>
+            </a>
+
+            <!-- Menü -->
+            <nav class="flex-1 py-md overflow-y-auto">
+                @{
+                    bool herAdmin = User.IsInRole("BasAdmin") || User.IsInRole("Moderator") || User.IsInRole("KategoriYoneticisi") || User.IsInRole("YazarYoneticisi") || User.IsInRole("DestekYoneticisi") || User.IsInRole("IcerikEditoru");
+                }
+
+                <a href="/Panel/Index" class="admin-nav flex items-center gap-sm px-lg py-3 text-white/90 hover:bg-white/10 transition-colors">
+                    <span class="material-symbols-outlined text-[20px]">dashboard</span> Panel
+                </a>
+                @if (herAdmin)
+                {
+                    <a href="/Message/Inbox" class="admin-nav flex items-center gap-sm px-lg py-3 text-white/90 hover:bg-white/10 transition-colors">
+                        <span class="material-symbols-outlined text-[20px]">forum</span> Mesajlarım
+                    </a>
+                }
+
+                @if (User.IsInRole("BasAdmin") || User.IsInRole("KategoriYoneticisi"))
+                {
+                    <a href="/AdminCategory/Index" class="admin-nav flex items-center gap-sm px-lg py-3 text-white/90 hover:bg-white/10 transition-colors">
+                        <span class="material-symbols-outlined text-[20px]">category</span> Kategoriler
+                    </a>
+                }
+                @if (User.IsInRole("BasAdmin") || User.IsInRole("Moderator"))
+                {
+                    <a href="/Heading/Index" class="admin-nav flex items-center gap-sm px-lg py-3 text-white/90 hover:bg-white/10 transition-colors">
+                        <span class="material-symbols-outlined text-[20px]">article</span> Başlıklar
+                    </a>
+                }
+                @if (User.IsInRole("BasAdmin") || User.IsInRole("Moderator") || User.IsInRole("IcerikEditoru"))
+                {
+                    <a href="/Content/GetAllContent" class="admin-nav flex items-center gap-sm px-lg py-3 text-white/90 hover:bg-white/10 transition-colors">
+                        <span class="material-symbols-outlined text-[20px]">chat</span> Entryler
+                    </a>
+                }
+                @if (User.IsInRole("BasAdmin") || User.IsInRole("YazarYoneticisi"))
+                {
+                    <a href="/Writer/Index" class="admin-nav flex items-center gap-sm px-lg py-3 text-white/90 hover:bg-white/10 transition-colors">
+                        <span class="material-symbols-outlined text-[20px]">group</span> Yazarlar
+                    </a>
+                }
+                @if (herAdmin)
+                {
+                    <a href="/Chart/Index" class="admin-nav flex items-center gap-sm px-lg py-3 text-white/90 hover:bg-white/10 transition-colors">
+                        <span class="material-symbols-outlined text-[20px]">bar_chart</span> Grafikler
+                    </a>
+                }
+                @if (User.IsInRole("BasAdmin") || User.IsInRole("DestekYoneticisi"))
+                {
+                    <a href="/Contact/Index" class="admin-nav flex items-center gap-sm px-lg py-3 text-white/90 hover:bg-white/10 transition-colors">
+                        <span class="material-symbols-outlined text-[20px]">mail</span> İletişim Mesajları
+                    </a>
+                }
+                @if (herAdmin)
+                {
+                    <a href="/About/Index" class="admin-nav flex items-center gap-sm px-lg py-3 text-white/90 hover:bg-white/10 transition-colors">
+                        <span class="material-symbols-outlined text-[20px]">info</span> Hakkımızda
+                    </a>
+                    <a href="/Gallery/Index" class="admin-nav flex items-center gap-sm px-lg py-3 text-white/90 hover:bg-white/10 transition-colors">
+                        <span class="material-symbols-outlined text-[20px]">photo_library</span> Galeri
+                    </a>
+                }
+
+                @if (User.IsInRole("BasAdmin"))
+                {
+                    <a href="/Authorization/Index" class="admin-nav flex items-center gap-sm px-lg py-3 text-white/90 hover:bg-white/10 transition-colors">
+                        <span class="material-symbols-outlined text-[20px]">admin_panel_settings</span> Yetkilendirmeler
+                    </a>
+                }
+            </nav>
+
+            <!-- Çıkış -->
+            <a href="/Login/LogOut" class="flex items-center gap-sm px-lg py-4 text-white/90 hover:bg-white/10 transition-colors" style="border-top:1px solid rgba(255,255,255,0.12);">
+                <span class="material-symbols-outlined text-[20px]">logout</span> Çıkış Yap
+            </a>
+        </aside>
+
+        <!-- SAĞ: üst bar + içerik -->
+        <div class="flex-1 flex flex-col min-w-0" style="background:#FBF7F3;">
+            <!-- Üst bar -->
+            <header class="h-16 bg-surface flex items-center justify-between px-lg shadow-[0_4px_16px_rgba(75,64,56,0.06)]">
+                <h1 class="font-headline-sm text-headline-sm text-on-surface">@ViewBag.Title</h1>
+                <div class="flex items-center gap-sm">
+                    <div class="w-9 h-9 rounded-full bg-nude-lila-bg text-nude-lila-text flex items-center justify-center font-label-md">
+                        @(User.Identity.Name != null && User.Identity.Name.Length > 0 ? User.Identity.Name.Substring(0,1).ToUpper() : "A")
+                    </div>
+                    <span class="font-label-md text-on-surface-variant hidden md:block">@User.Identity.Name</span>
+                </div>
+            </header>
+
+            <!-- İçerik -->
+            <main class="flex-1 p-lg overflow-y-auto">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

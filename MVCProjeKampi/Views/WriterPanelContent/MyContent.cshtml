@@ -1,0 +1,87 @@
+﻿@using EntityLayer.Concrete
+@model List<Content>
+@{
+    ViewBag.Title = "Entrylerim";
+    Layout = "~/Views/Shared/_WriterLayout.cshtml";
+    var headingNames = ViewBag.HeadingNames as Dictionary<int, string>;
+}
+
+<div class="max-w-4xl mx-auto flex flex-col gap-lg">
+    <h1 class="font-headline-md text-headline-md text-primary">Entrylerim</h1>
+    @if (TempData["EntryHata"] != null)
+    {
+        <div class="bg-nude-pink-bg text-nude-pink-text rounded-xl p-md font-label-md text-center">@TempData["EntryHata"]</div>
+    }
+    @if (Model.Count == 0)
+    {
+        <div class="bg-surface-container-lowest rounded-xl p-lg text-center text-on-surface-variant">Henüz entry yazmadın.</div>
+    }
+
+    @foreach (var item in Model)
+    {
+        var baslikAdi = (headingNames != null && headingNames.ContainsKey(item.HeadingID)) ? headingNames[item.HeadingID] : "başlık";
+        <article class="bg-surface-container-lowest rounded-xl p-lg shadow-[0_4px_16px_rgba(75,64,56,0.06)]">
+            <!-- Hangi başlığa yazılmış -->
+            <a href="/Default/Baslik/@item.HeadingID" class="inline-flex items-center gap-xs text-primary font-label-md mb-sm hover:brightness-110">
+                <span class="material-symbols-outlined text-[18px]">subject</span> @baslikAdi
+            </a>
+            <p class="font-body-lg text-on-surface leading-relaxed break-words">@item.ContentValue</p>
+            <div class="flex items-center justify-between border-t border-[#EFE6DD] pt-md mt-md">
+                <span class="text-label-sm text-outline">@item.ContentDate.ToShortDateString()</span>
+                <div class="flex items-center gap-sm">
+                    <button type="button"
+                            onclick="entryDuzenle(@item.ContentID, this)"
+                            data-entry="@item.ContentValue"
+                            class="flex items-center gap-xs px-md py-2 border border-nude-orange-border text-nude-orange-text font-label-md rounded-full hover:bg-nude-orange-bg transition-all">
+                        <span class="material-symbols-outlined text-[18px]">edit</span> Düzenle
+                    </button>
+                    <a href="/WriterPanelContent/DeleteContent/@item.ContentID"
+                       onclick="return confirm('Bu entryyi silmek istediğinize emin misiniz?');"
+                       class="flex items-center gap-xs px-md py-2 border border-nude-pink-border text-nude-pink-text font-label-md rounded-full hover:bg-nude-pink-bg transition-all">
+                        <span class="material-symbols-outlined text-[18px]">delete</span> Sil
+                    </a>
+                </div>
+            </div>
+        </article>
+    }
+</div>
+<!-- DÜZENLE MODAL -->
+<div id="editModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-gutter" style="background:rgba(75,64,56,0.4);">
+    <div class="bg-surface-container-lowest rounded-xl border-4 border-nude-lila-border shadow-[0_4px_16px_rgba(75,64,56,0.15)] w-full max-w-lg" style="max-width:520px;">
+        <div class="p-lg">
+            <div class="flex items-center justify-between mb-md">
+                <h2 class="font-headline-sm text-headline-sm text-primary">Entry'yi Düzenle</h2>
+                <button type="button" onclick="modalKapat()" class="text-outline hover:text-primary">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <form action="/WriterPanelContent/EditContent" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" id="editContentId" />
+                <textarea name="contentValue" id="editContentValue" rows="5"
+                          class="w-full p-md bg-surface-container-lowest border border-[#EFE6DD] rounded-xl font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"></textarea>
+                <div class="flex justify-end gap-sm mt-md">
+                    <button type="button" onclick="modalKapat()" class="px-lg py-2 border border-[#EFE6DD] text-on-surface-variant font-label-md rounded-full hover:bg-surface-container transition-all">Vazgeç</button>
+                    <button type="submit" class="px-lg py-2 bg-primary text-on-primary font-label-md rounded-full hover:brightness-110 transition-all">Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function entryDuzenle(id, btn) {
+            document.getElementById('editContentId').value = id;
+            document.getElementById('editContentValue').value = btn.getAttribute('data-entry');
+            document.getElementById('editModal').classList.remove('hidden');
+        }
+        function modalKapat() {
+            document.getElementById('editModal').classList.add('hidden');
+        }
+        // Arka plana tıklayınca kapansın
+        document.getElementById('editModal').addEventListener('click', function (e) {
+            if (e.target === this) modalKapat();
+        });
+    </script>
+}

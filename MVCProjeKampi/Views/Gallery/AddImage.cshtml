@@ -1,0 +1,33 @@
+﻿@model EntityLayer.Concrete.ImageFile
+@{
+    ViewBag.Title = "Görsel Ekle";
+    Layout = "~/Views/Shared/_adminLayout.cshtml";
+}
+
+<div class="max-w-xl mx-auto">
+    <div class="bg-surface-container-lowest rounded-xl p-lg border-4 border-nude-green-border shadow-[0_4px_16px_rgba(75,64,56,0.06)]">
+        <div class="flex items-center gap-sm mb-lg">
+            <span class="material-symbols-outlined text-nude-green-text">add_photo_alternate</span>
+            <h2 class="font-headline-md text-headline-md text-nude-green-text">Galeriye Görsel Ekle</h2>
+        </div>
+
+        @using (Html.BeginForm("AddImage", "Gallery", FormMethod.Post))
+        {    @Html.AntiForgeryToken()
+        
+        <div class="flex flex-col gap-md">
+            <div>
+                <label class="block font-label-md text-on-surface-variant mb-xs">Görsel Adı</label>
+                @Html.TextBoxFor(x => x.ImageName, new { @class = "w-full px-4 py-2.5 bg-surface-container-lowest border border-[#EFE6DD] rounded-xl font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all", placeholder = "Örn: İstanbul manzarası" })
+            </div>
+            <div>
+                <label class="block font-label-md text-on-surface-variant mb-xs">Görsel Linki</label>
+                @Html.TextBoxFor(x => x.ImagePath, new { @class = "w-full px-4 py-2.5 bg-surface-container-lowest border border-[#EFE6DD] rounded-xl font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all", placeholder = "https://..." })
+            </div>
+            <div class="flex justify-end gap-sm mt-sm">
+                <a href="/Gallery/Index" class="px-lg py-2.5 border border-[#EFE6DD] text-on-surface-variant font-label-md rounded-full hover:bg-surface-container transition-all">Vazgeç</a>
+                <button type="submit" class="px-lg py-2.5 bg-primary text-on-primary font-label-md rounded-full hover:brightness-110 transition-all">Ekle</button>
+            </div>
+        </div>
+        }
+    </div>
+</div>

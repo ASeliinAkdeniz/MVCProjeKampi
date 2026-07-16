@@ -1,0 +1,94 @@
+﻿@using EntityLayer.Concrete
+@using PagedList
+@model IPagedList<Content>
+@{
+    ViewBag.Title = "Entry Yönetimi";
+    Layout = "~/Views/Shared/_adminLayout.cshtml";
+    var headingNames = ViewBag.HeadingNames as Dictionary<int, string>;
+    var writerNames = ViewBag.WriterNames as Dictionary<int, string>;
+}
+
+<div class="flex flex-col gap-lg">
+    <h2 class="font-headline-md text-headline-md text-primary">Entry Yönetimi</h2>
+
+    <!-- Arama -->
+    <div class="bg-surface-container-lowest rounded-xl p-lg shadow-[0_4px_16px_rgba(75,64,56,0.06)]">
+        <form action="/Content/GetAllContent" method="get" class="flex items-center gap-sm">
+            <div class="relative" style="flex:1 1 auto;">
+                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">search</span>
+                <input name="p" value="@ViewBag.Arama" placeholder="Entry içinde ara..."
+                       class="w-full pl-12 pr-4 py-2.5 bg-surface-container-lowest border border-[#EFE6DD] rounded-full font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+            </div>
+            <button type="submit" class="px-lg py-2.5 bg-primary text-on-primary font-label-md rounded-full hover:brightness-110 transition-all">Ara</button>
+        </form>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="bg-surface-container-lowest rounded-xl p-lg text-center text-on-surface-variant">Eşleşen entry bulunamadı.</div>
+    }
+
+    <div class="flex flex-col gap-sm">
+        @foreach (var item in Model)
+        {
+            var baslik = (headingNames != null && headingNames.ContainsKey(item.HeadingID)) ? headingNames[item.HeadingID] : "-";
+            var yazar = (item.WriterID != null && writerNames != null && writerNames.ContainsKey(item.WriterID.Value)) ? writerNames[item.WriterID.Value] : "anonim";
+            <article class="bg-surface-container-lowest rounded-xl p-lg shadow-[0_4px_16px_rgba(75,64,56,0.06)] @(item.ContentStatus == false ? "opacity-50" : "")">
+                <div class="flex items-center justify-between mb-sm flex-wrap gap-sm">
+                    <a href="/Default/Baslik/@item.HeadingID" class="inline-flex items-center gap-xs text-primary font-label-md">
+                        <span class="material-symbols-outlined text-[18px]">subject</span> @baslik
+                    </a>
+                    @if (item.ContentStatus == false)
+                    {
+                        <span class="px-3 py-1 rounded-full bg-nude-pink-bg text-nude-pink-text text-label-sm">Pasif</span>
+                    }
+                </div>
+                <p class="font-body-lg text-on-surface leading-relaxed break-words">@item.ContentValue</p>
+                <div class="flex items-center justify-between border-t border-[#EFE6DD] pt-md mt-md flex-wrap gap-sm">
+                    <div class="flex items-center gap-md">
+                        <span class="font-label-md text-on-surface-variant">@yazar</span>
+                        <span class="text-label-sm text-outline">@item.ContentDate.ToShortDateString()</span>
+                        <span class="text-label-sm text-outline">👍 @item.LikeCount · 👎 @item.DislikeCount</span>
+                    </div>
+                    @if (item.ContentStatus != false)
+                    {
+                        <a href="/Content/DeleteContent/@item.ContentID"
+                           onclick="return confirm('Bu entryyi pasife almak istediğinize emin misiniz?');"
+                           class="flex items-center gap-xs px-md py-2 border border-nude-pink-border text-nude-pink-text font-label-md rounded-full hover:bg-nude-pink-bg transition-all text-label-sm">
+                            <span class="material-symbols-outlined text-[16px]">delete</span> Kaldır
+                        </a>
+                    }
+                </div>
+            </article>
+        }
+    </div>
+
+    @if (Model.PageCount > 1)
+    {
+        <div class="flex items-center justify-center gap-sm mt-lg flex-wrap">
+            @if (Model.HasPreviousPage)
+            {
+                <a href="@Url.Action("GetAllContent", new { p = ViewBag.Arama, page = Model.PageNumber - 1 })" class="px-3 py-2 rounded-full bg-surface-container-lowest border border-[#EFE6DD] text-on-surface hover:bg-primary/10 transition-colors flex items-center">
+                    <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+                </a>
+            }
+            @for (int i = 1; i <= Model.PageCount; i++)
+            {
+                if (i == Model.PageNumber)
+                {
+                    <span class="px-4 py-2 rounded-full bg-primary text-on-primary font-label-md">@i</span>
+                }
+                else
+                {
+                    <a href="@Url.Action("GetAllContent", new { p = ViewBag.Arama, page = i })" class="px-4 py-2 rounded-full bg-surface-container-lowest border border-[#EFE6DD] text-on-surface hover:bg-primary/10 transition-colors font-label-md">@i</a>
+                }
+            }
+            @if (Model.HasNextPage)
+            {
+                <a href="@Url.Action("GetAllContent", new { p = ViewBag.Arama, page = Model.PageNumber + 1 })" class="px-3 py-2 rounded-full bg-surface-container-lowest border border-[#EFE6DD] text-on-surface hover:bg-primary/10 transition-colors flex items-center">
+                    <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+                </a>
+            }
+        </div>
+    }
+</div>

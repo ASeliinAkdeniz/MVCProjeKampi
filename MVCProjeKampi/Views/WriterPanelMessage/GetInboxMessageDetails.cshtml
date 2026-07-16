@@ -1,0 +1,55 @@
+﻿@model EntityLayer.Concrete.Message
+@{
+    ViewBag.Title = "Mesaj Detayı";
+    Layout = "~/Views/Shared/_WriterLayout.cshtml";
+    var writerImages = ViewBag.WriterImages as Dictionary<string, string>;
+    string foto = (writerImages != null && Model.SenderMail != null && writerImages.ContainsKey(Model.SenderMail)) ? writerImages[Model.SenderMail] : null;
+}
+<div class="grid grid-cols-1 md:grid-cols-12 gap-lg">
+    @Html.Action("MessageListMenu", "WriterPanelMessage")
+    <div class="md:col-span-9">
+        <div class="flex items-center justify-between mb-lg">
+            <h1 class="font-headline-md text-headline-md text-primary">Mesajı Oku</h1>
+            <a href="/WriterPanelMessage/Inbox" class="flex items-center gap-xs px-lg py-2 border border-[#EFE6DD] text-on-surface-variant font-label-md rounded-full hover:bg-surface-container transition-all">
+                <span class="material-symbols-outlined text-[18px]">arrow_back</span> Geri
+            </a>
+        </div>
+        <div class="bg-surface-container-lowest rounded-xl border-4 border-nude-blue-border shadow-[0_4px_16px_rgba(75,64,56,0.06)] overflow-hidden">
+            <!-- Başlık kısmı -->
+            <div class="p-lg border-b border-[#EFE6DD]">
+                <h2 class="font-headline-sm text-headline-sm text-on-surface mb-md break-words">@Model.Subject</h2>
+                <div class="flex items-center gap-md">
+                    @if (!string.IsNullOrEmpty(foto))
+                    {
+                        <img src="@foto" alt="@Model.SenderMail" class="w-11 h-11 rounded-full object-cover border-2 border-nude-blue-border shrink-0" />
+                    }
+                    else
+                    {
+                        <div class="w-11 h-11 rounded-full flex items-center justify-center bg-nude-blue-bg text-nude-blue-text font-label-md shrink-0">
+                            @(!string.IsNullOrEmpty(Model.SenderMail) ? Model.SenderMail.Substring(0, 1).ToUpper() : "?")
+                        </div>
+                    }
+                    <div class="min-w-0" style="flex:1 1 auto;">
+                        <div class="font-label-md text-on-surface" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">@Model.SenderMail</div>
+                        <div class="text-label-sm text-outline">@(((DateTime)Model.MessageDate).ToString("dd MMMM yyyy"))</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Mesaj içeriği -->
+            <div class="p-lg">
+                <div class="font-body-lg text-on-surface leading-relaxed break-words" style="white-space:pre-wrap;">@Model.MessageContent</div>
+            </div>
+            <!-- Alt işlemler -->
+            <div class="p-lg border-t border-[#EFE6DD] flex items-center gap-sm">
+                <a href="/WriterPanelMessage/NewMessage" class="flex items-center gap-xs px-lg py-2 bg-primary text-on-primary font-label-md rounded-full hover:brightness-110 transition-all">
+                    <span class="material-symbols-outlined text-[18px]">reply</span> Yanıtla
+                </a>
+                <a href="/WriterPanelMessage/MoveToTrash/@Model.MessageID?from=Inbox"
+                   onclick="return confirm('Bu mesajı çöp kutusuna taşımak istediğinize emin misiniz?');"
+                   class="flex items-center gap-xs px-lg py-2 border border-nude-pink-border text-nude-pink-text font-label-md rounded-full hover:bg-nude-pink-bg transition-all">
+                    <span class="material-symbols-outlined text-[18px]">delete</span> Çöpe At
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

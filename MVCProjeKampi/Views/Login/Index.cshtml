@@ -1,0 +1,62 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Yönetim Girişi - Tatlı Sözlük</title>
+    <link href="~/Content/tailwind.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&family=Nunito+Sans:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+</head>
+<body class="font-body-md text-on-surface antialiased" style="min-height:100vh; margin:0; display:flex; align-items:center; justify-content:center; padding:24px; background:#6B5A7A;">
+
+    <div style="width:100%; max-width:440px;">
+        <!-- Logo (beyaz, koyu lila zeminde) -->
+        <div style="text-align:center; margin-bottom:24px;">
+            <div style="display:inline-flex; align-items:center; gap:10px; color:#fff;">
+                <span class="material-symbols-outlined" style="font-size:40px;">menu_book</span>
+                <span class="font-headline-md font-bold" style="font-size:30px;">Tatlı Sözlük</span>
+            </div>
+            <div style="color:rgba(255,255,255,0.7); font-size:14px; margin-top:4px;">Yönetim Paneli</div>
+        </div>
+
+        <!-- Giriş kartı -->
+        <div class="bg-surface-container-lowest" style="border-radius:20px; padding:36px; box-shadow:0 10px 40px rgba(0,0,0,0.2);">
+            <h1 class="font-headline-md" style="color:#6B5A7A; font-size:24px; text-align:center; margin:0 0 24px 0;">Yönetici Girişi</h1>
+
+            @if (ViewBag.ErrorMessage != null)
+            {
+                <div class="bg-nude-pink-bg text-nude-pink-text font-label-md" style="border-radius:12px; padding:12px; margin-bottom:16px; text-align:center;">@ViewBag.ErrorMessage</div>
+            }
+
+            @using (Html.BeginForm("Index", "Login", FormMethod.Post))
+            {
+                <div style="display:flex; flex-direction:column; gap:16px;">
+                    <div style="position:relative;">
+                        <span class="material-symbols-outlined text-outline" style="position:absolute; left:16px; top:50%; transform:translateY(-50%); font-size:22px;">person</span>
+                        <input type="text" name="AdminUserName" required placeholder="Kullanıcı adı"
+                               class="border border-[#EFE6DD] font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                               style="width:100%; box-sizing:border-box; border-radius:12px; padding:14px 16px 14px 50px;" />
+                    </div>
+                    <div style="position:relative;">
+                        <span class="material-symbols-outlined text-outline" style="position:absolute; left:16px; top:50%; transform:translateY(-50%); font-size:22px;">lock</span>
+                        <input type="password" name="AdminPassword" required placeholder="Şifre"
+                               class="border border-[#EFE6DD] font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                               style="width:100%; box-sizing:border-box; border-radius:12px; padding:14px 16px 14px 50px;" />
+                    </div>
+                    <button type="submit" class="text-on-primary font-label-md hover:brightness-110 transition-all"
+                            style="width:100%; box-sizing:border-box; border:none; border-radius:9999px; padding:14px; cursor:pointer; font-size:15px; background:#6B5A7A;">
+                        Giriş Yap
+                    </button>
+                </div>
+            }
+            <div style="text-align:center; margin-top:20px;">
+                <a href="/Default/HomePage" class="text-outline" style="font-size:13px; text-decoration:none;">← Siteye dön</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,77 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Security;
+using DataAccessLayer.Concrete;
+
+namespace MVCProjeKampi.Roles
+{
+    public class AdminRoleProvider : RoleProvider
+    {
+        public override string ApplicationName { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        public override void AddUsersToRoles(string[] usernames, string[] roleNames)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void CreateRole(string roleName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool DeleteRole(string roleName, bool throwOnPopulatedRole)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string[] FindUsersInRole(string roleName, string usernameToMatch)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string[] GetAllRoles()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string[] GetRolesForUser(string username)
+        {
+            Context c = new Context();
+
+            // Admins tablosunda mı? → kendi rolünü dön
+            var admin = c.Admins.FirstOrDefault(y => y.AdminUserName == username);
+            if (admin != null && !string.IsNullOrEmpty(admin.AdminRole))
+                return new string[] { admin.AdminRole };
+
+            // Writers tablosunda mı? → "Writer" rolü
+            var writer = c.Writers.FirstOrDefault(y => y.WriterMail == username);
+            if (writer != null)
+                return new string[] { "Writer" };
+
+            // Hiçbiri değilse boş dizi (artık NullReferenceException yok)
+            return new string[] { };
+        }
+
+        public override string[] GetUsersInRole(string roleName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool IsUserInRole(string username, string roleName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void RemoveUsersFromRoles(string[] usernames, string[] roleNames)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool RoleExists(string roleName)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}

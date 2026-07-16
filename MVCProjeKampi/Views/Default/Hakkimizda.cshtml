@@ -1,0 +1,123 @@
+﻿@using EntityLayer.Concrete
+@{
+    ViewBag.Title = "Hakkımızda";
+    Layout = Session["WriterMail"] != null
+    ? "~/Views/Shared/_WriterLayout.cshtml"
+    : "~/Views/Shared/_vitrinLayout.cshtml";
+    var about = ViewBag.About as About;
+    var gallery = ViewBag.Gallery as List<ImageFile>;
+}
+
+<div class="max-w-4xl mx-auto flex flex-col gap-xl">
+
+    <!-- HAKKIMIZDA -->
+    <section class="bg-surface-container-lowest rounded-xl p-lg border-4 border-nude-lila-border shadow-[0_4px_16px_rgba(75,64,56,0.06)]">
+        <h1 class="font-headline-md text-headline-md text-primary mb-md">Hakkımızda</h1>
+        @if (about != null)
+        {
+            <p class="font-body-lg text-on-surface leading-relaxed mb-md">@about.AboutDetails1</p>
+            <p class="font-body-md text-on-surface-variant leading-relaxed">@about.AboutDetails2</p>
+        }
+        else
+        {
+            <p class="text-on-surface-variant">Tatlı Sözlük, samimi ve nazik bir diyalog alanıdır.</p>
+        }
+    </section>
+
+    <!-- İSTATİSTİKLER (SOL) + GALERİ SLIDER (SAĞ) -->
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-lg items-start">
+
+        <!-- SOL: İstatistikler -->
+        <div class="flex flex-col gap-md">
+            <h2 class="inline-block font-headline-sm text-headline-sm bg-nude-lila-bg text-nude-lila-text px-4 py-2 rounded-full w-fit">İstatistikler</h2>
+            <div class="grid grid-cols-1 gap-md">
+                <div class="bg-nude-green-bg rounded-xl p-lg flex items-center justify-between">
+                    <span class="font-label-md text-nude-green-text">Başlık</span>
+                    <span class="font-display-lg text-nude-green-text">@ViewBag.TotalHeadings</span>
+                </div>
+                <div class="bg-nude-orange-bg rounded-xl p-lg flex items-center justify-between">
+                    <span class="font-label-md text-nude-orange-text">Entry</span>
+                    <span class="font-display-lg text-nude-orange-text">@ViewBag.TotalEntries</span>
+                </div>
+                <div class="bg-nude-blue-bg rounded-xl p-lg flex items-center justify-between">
+                    <span class="font-label-md text-nude-blue-text">Yazar</span>
+                    <span class="font-display-lg text-nude-blue-text">@ViewBag.TotalWriters</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- SAĞ: Galeri (otomatik geçişli) -->
+        <div class="flex flex-col gap-md">
+            <h2 class="inline-block font-headline-sm text-headline-sm bg-nude-pink-bg text-nude-pink-text px-4 py-2 rounded-full w-fit">Galeri</h2>
+            @if (gallery != null && gallery.Count > 0)
+            {
+                <div id="galeriSlider" class="relative rounded-xl overflow-hidden border-8 border-nude-pink-border aspect-square">
+                    @{ int gi = 0; }
+                    @foreach (var img in gallery)
+                    {
+                        <img src="@img.ImagePath" alt="@img.ImageName"
+                             class="galeri-foto absolute inset-0 w-full h-full object-cover transition-opacity duration-700 @(gi == 0 ? "opacity-100" : "opacity-0")" />
+                        gi++;
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="bg-surface-container-lowest rounded-xl p-lg text-center text-on-surface-variant">Henüz görsel yok.</div>
+            }
+        </div>
+    </section>
+
+
+
+    <!-- HARİTA (İstanbul örnek konum) -->
+    <section>
+        <h2 class="font-headline-sm text-headline-sm text-on-surface mb-md">Bizi Bulun</h2>
+        <div class="rounded-xl overflow-hidden shadow-[0_4px_16px_rgba(75,64,56,0.06)]">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3011.9!2d28.9784!3d41.0082!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDHCsDAwJzI5LjUiTiAyOMKwNTgnNDIuMiJF!5e0!3m2!1str!2str!4v1600000000000"
+                    width="100%" height="360" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+    </section>
+
+    <!-- İLETİŞİM FORMU -->
+    <section class="bg-surface-container-lowest rounded-xl p-lg shadow-[0_4px_16px_rgba(75,64,56,0.06)]">
+        <h2 class="font-headline-sm text-headline-sm text-on-surface mb-md">İletişime Geç</h2>
+        @if (TempData["IletisimMesaj"] != null)
+        {
+            <div class="bg-nude-green-bg text-nude-green-text rounded-xl p-md mb-md font-label-md">@TempData["IletisimMesaj"]</div>
+        }
+        <form action="/Default/IletisimGonder" method="post" class="flex flex-col gap-md">
+            @Html.AntiForgeryToken()
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+                <input name="UserName" placeholder="Adınız" required
+                       class="p-md bg-surface-container-lowest border border-[#EFE6DD] rounded-xl font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+                <input name="UserMail" type="email" placeholder="E-posta" required
+                       class="p-md bg-surface-container-lowest border border-[#EFE6DD] rounded-xl font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+            </div>
+            <input name="Subject" placeholder="Konu" required
+                   class="p-md bg-surface-container-lowest border border-[#EFE6DD] rounded-xl font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+            <textarea name="Message" rows="4" placeholder="Mesajınız" required
+                      class="p-md bg-surface-container-lowest border border-[#EFE6DD] rounded-xl font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"></textarea>
+            <div class="flex justify-end">
+                <button type="submit" class="px-lg py-2 bg-primary text-on-primary font-label-md rounded-full hover:brightness-110 transition-all">Gönder</button>
+            </div>
+        </form>
+    </section>
+</div>
+@section Scripts {
+    <script>
+        (function () {
+            var fotolar = document.querySelectorAll('#galeriSlider .galeri-foto');
+            if (fotolar.length > 1) {
+                var aktif = 0;
+                setInterval(function () {
+                    fotolar[aktif].classList.remove('opacity-100');
+                    fotolar[aktif].classList.add('opacity-0');
+                    aktif = (aktif + 1) % fotolar.length;
+                    fotolar[aktif].classList.remove('opacity-0');
+                    fotolar[aktif].classList.add('opacity-100');
+                }, 3000);
+            }
+        })();
+    </script>
+}

@@ -1,0 +1,30 @@
+﻿@model EntityLayer.Concrete.Category
+@{
+    ViewBag.Title = "Yeni Kategori";
+    Layout = "~/Views/Shared/_adminLayout.cshtml";
+}
+
+<div class="max-w-2xl mx-auto">
+    <div class="bg-surface-container-lowest rounded-xl p-lg border-4 border-nude-green-border shadow-[0_4px_16px_rgba(75,64,56,0.06)]">
+        <div class="flex items-center gap-sm mb-lg">
+            <span class="material-symbols-outlined text-nude-green-text">add_circle</span>
+            <h2 class="font-headline-md text-headline-md text-nude-green-text">Yeni Kategori Ekle</h2>
+        </div>
+
+        @using (Html.BeginForm("AddCategory", "AdminCategory", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            <div class="flex flex-col gap-md">
+                <div>
+                    <label class="block font-label-md text-on-surface-variant mb-xs">Kategori Adı</label>
+                    @Html.TextBoxFor(x => x.CategoryName, new { @class = "w-full px-4 py-2.5 bg-surface-container-lowest border border-[#EFE6DD] rounded-xl font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all", placeholder = "Kategori adını yaz..." })
+                    @Html.ValidationMessageFor(x => x.CategoryName, "", new { @class = "text-nude-pink-text text-label-sm" })
+                </div>
+                <div class="flex justify-end gap-sm mt-sm">
+                    <a href="/AdminCategory/Index" class="px-lg py-2.5 border border-[#EFE6DD] text-on-surface-variant font-label-md rounded-full hover:bg-surface-container transition-all">Vazgeç</a>
+                    <button type="submit" class="px-lg py-2.5 bg-primary text-on-primary font-label-md rounded-full hover:brightness-110 transition-all">Kaydet</button>
+                </div>
+            </div>
+        }
+    </div>
+</div>

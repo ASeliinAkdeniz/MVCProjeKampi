@@ -1,0 +1,111 @@
+﻿@using EntityLayer.Concrete
+@model List<ImageFile>
+@{
+    ViewBag.Title = "Galeri";
+    Layout = "~/Views/Shared/_adminLayout.cshtml";
+}
+@functions {
+    public static string CerceveRenk(int id)
+    {
+        string[] r = { "border-nude-green-border", "border-nude-orange-border", "border-nude-yellow-border", "border-nude-blue-border", "border-nude-pink-border", "border-nude-lila-border" };
+        return r[id % r.Length];
+    }
+}
+
+<div class="flex flex-col gap-lg">
+    <div class="flex items-center justify-between">
+        <h2 class="font-headline-md text-headline-md text-primary">Galeri</h2>
+        <a href="/Gallery/AddImage" class="flex items-center gap-xs px-lg py-2 bg-primary text-on-primary font-label-md rounded-full hover:brightness-110 transition-all">
+            <span class="material-symbols-outlined text-[18px]">add_photo_alternate</span> Görsel Ekle
+        </a>
+    </div>
+
+    @if (Model.Count == 0)
+    {
+        <div class="bg-surface-container-lowest rounded-xl p-lg text-center text-on-surface-variant">Henüz galeride görsel yok.</div>
+    }
+
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-md">
+        @{ int gi = 0; }
+        @foreach (var item in Model)
+        {
+            <div class="bg-surface-container-lowest rounded-xl p-sm shadow-[0_4px_16px_rgba(75,64,56,0.06)] flex flex-col">
+                <div class="rounded-xl overflow-hidden aspect-square border-4 @CerceveRenk(item.ImageID) mb-sm cursor-pointer"
+                     onclick="lightboxAc(@gi)">
+                    <img src="@item.ImagePath" alt="@item.ImageName" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
+                </div>
+                <div style="text-align:center; padding:4px 4px 8px 4px;">
+                    <div class="text-on-surface" style="font-weight:700; font-size:15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">@item.ImageName</div>
+                    <a href="/Gallery/DeleteImage/@item.ImageID" onclick="return confirm('Bu görseli silmek istediğinize emin misiniz?');"
+                       class="inline-flex items-center gap-xs text-nude-pink-text hover:bg-nude-pink-bg rounded-full px-2 py-1 transition-all text-label-sm" style="margin-top:4px;">
+                        <span class="material-symbols-outlined text-[16px]">delete</span> Sil
+                    </a>
+                </div>
+            </div>
+            gi++;
+        }
+    </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div id="lightbox" class="hidden" style="position:fixed; inset:0; z-index:100; background:rgba(75,64,56,0.85); display:none; align-items:center; justify-content:center;">
+    <button type="button" onclick="lightboxKapat()" style="position:absolute; top:20px; right:24px; background:none; border:none; color:#fff; cursor:pointer;">
+        <span class="material-symbols-outlined" style="font-size:36px;">close</span>
+    </button>
+    <button type="button" onclick="lightboxGec(-1)" style="position:absolute; left:24px; background:rgba(255,255,255,0.15); border:none; color:#fff; cursor:pointer; border-radius:9999px; padding:12px; display:flex;">
+        <span class="material-symbols-outlined" style="font-size:32px;">chevron_left</span>
+    </button>
+    <button type="button" onclick="lightboxGec(1)" style="position:absolute; right:24px; background:rgba(255,255,255,0.15); border:none; color:#fff; cursor:pointer; border-radius:9999px; padding:12px; display:flex;">
+        <span class="material-symbols-outlined" style="font-size:32px;">chevron_right</span>
+    </button>
+    <div style="text-align:center; max-width:85vw;">
+        <img id="lightboxImg" src="" alt="" style="max-width:85vw; max-height:75vh; border-radius:16px; border:8px solid #fff; object-fit:contain; background:#fff;" />
+        <div id="lightboxAd" style="color:#fff; font-weight:700; font-size:20px; margin-top:16px;"></div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        var galeriGorseller = [
+            @foreach (var item in Model)
+            {
+                @: { yol: "@item.ImagePath", ad: "@item.ImageName" },
+            }
+        ];
+        var aktifIndex = 0;
+
+        function lightboxAc(i) {
+            aktifIndex = i;
+            lightboxGoster();
+            var lb = document.getElementById('lightbox');
+            lb.classList.remove('hidden');
+            lb.style.display = 'flex';
+        }
+        function lightboxGoster() {
+            var g = galeriGorseller[aktifIndex];
+            document.getElementById('lightboxImg').src = g.yol;
+            document.getElementById('lightboxAd').innerText = g.ad;
+        }
+        function lightboxGec(yon) {
+            aktifIndex = (aktifIndex + yon + galeriGorseller.length) % galeriGorseller.length;
+            lightboxGoster();
+        }
+        function lightboxKapat() {
+            var lb = document.getElementById('lightbox');
+            lb.classList.add('hidden');
+            lb.style.display = 'none';
+        }
+        // Arka plana tıklayınca kapat
+        document.getElementById('lightbox').addEventListener('click', function (e) {
+            if (e.target === this) lightboxKapat();
+        });
+        // Klavye: ok tuşları + ESC
+        document.addEventListener('keydown', function (e) {
+            var lb = document.getElementById('lightbox');
+            if (lb.style.display !== 'flex') return;
+            if (e.key === 'ArrowLeft') lightboxGec(-1);
+            if (e.key === 'ArrowRight') lightboxGec(1);
+            if (e.key === 'Escape') lightboxKapat();
+        });
+    </script>
+}

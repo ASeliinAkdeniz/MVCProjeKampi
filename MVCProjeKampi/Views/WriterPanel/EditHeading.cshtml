@@ -1,0 +1,39 @@
+﻿@model EntityLayer.Concrete.Heading
+@{
+    ViewBag.Title = "Başlık Düzenle";
+    Layout = "~/Views/Shared/_WriterLayout.cshtml";
+}
+
+<div class="max-w-2xl mx-auto">
+    <div class="bg-surface-container-lowest rounded-xl p-lg border-4 border-nude-orange-border shadow-[0_4px_16px_rgba(75,64,56,0.06)]">
+        <div class="flex items-center gap-sm mb-lg">
+            <span class="material-symbols-outlined text-nude-orange-text">edit</span>
+            <h1 class="font-headline-md text-headline-md text-nude-orange-text">Başlığı Düzenle</h1>
+        </div>
+
+        @using (Html.BeginForm("EditHeading", "WriterPanel", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(x => x.HeadingID)
+            @Html.HiddenFor(x => x.HeadingDate)
+            @Html.HiddenFor(x => x.WriterID)
+            @Html.HiddenFor(x => x.HeadingStatus)
+
+            <div class="flex flex-col gap-md">
+                <div>
+                    <label class="block font-label-md text-on-surface-variant mb-xs">Başlık Adı</label>
+                    @Html.TextBoxFor(x => x.HeadingName, new { @class = "w-full px-4 py-2.5 bg-surface-container-lowest border border-[#EFE6DD] rounded-xl font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" })
+                    @Html.ValidationMessageFor(x => x.HeadingName, "", new { @class = "text-nude-pink-text text-label-sm" })
+                </div>
+                <div>
+                    <label class="block font-label-md text-on-surface-variant mb-xs">Kategori</label>
+                    @Html.DropDownListFor(x => x.CategoryID, (List<SelectListItem>)ViewBag.vlc, new { @class = "w-full px-4 py-2.5 bg-surface-container-lowest border border-[#EFE6DD] rounded-xl font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" })
+                </div>
+                <div class="flex justify-end gap-sm mt-sm">
+                    <a href="/WriterPanel/MyHeading" class="px-lg py-2.5 border border-[#EFE6DD] text-on-surface-variant font-label-md rounded-full hover:bg-surface-container transition-all">Vazgeç</a>
+                    <button type="submit" class="px-lg py-2.5 bg-primary text-on-primary font-label-md rounded-full hover:brightness-110 transition-all">Güncelle</button>
+                </div>
+            </div>
+        }
+    </div>
+</div>

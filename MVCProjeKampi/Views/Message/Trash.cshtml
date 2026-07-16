@@ -1,0 +1,48 @@
+﻿@using EntityLayer.Concrete
+@model List<Message>
+@{
+    ViewBag.Title = "Çöp Kutusu";
+    Layout = "~/Views/Shared/_adminLayout.cshtml";
+}
+<div class="row" style="padding:16px;">
+    @Html.Action("MessageListMenu", "Contact")
+    <div class="col-md-9">
+        <div class="card">
+            <div class="card-header"><h3 class="card-title">Çöp Kutusu</h3></div>
+            <div class="card-body p-0">
+                @if (Model == null || Model.Count == 0)
+                {
+                    <p style="padding:16px;">Çöp kutusu boş.</p>
+                }
+                else
+                {
+                    <table class="table table-bordered">
+                        <tr>
+                            <th>Gönderen</th>
+                            <th>Alıcı</th>
+                            <th>Konu</th>
+                            <th>Tarih</th>
+                            <th>İşlemler</th>
+                        </tr>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.SenderMail</td>
+                                <td>@item.ReceiverMail</td>
+                                <td>@item.Subject</td>
+                                <td>@item.MessageDate.ToShortDateString()</td>
+                                <td>
+                                    <a href="/Message/RestoreMessage/@item.MessageID" class="btn btn-success btn-sm">Geri Yükle</a>
+                                    <a href="/Message/DeletePermanent/@item.MessageID" class="btn btn-danger btn-sm"
+                                       onclick="return confirm('DİKKAT: Bu mesaj kalıcı olarak silinecek ve geri getirilemeyecek. Emin misiniz?');">
+                                        Kalıcı Sil
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </table>
+                }
+            </div>
+        </div>
+    </div>
+</div>

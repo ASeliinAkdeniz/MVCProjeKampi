@@ -1,0 +1,49 @@
+﻿@using EntityLayer.Concrete
+@model List<Message>
+@{
+    ViewBag.Title = "Çöp Kutusu";
+    Layout = "~/Views/Shared/_WriterLayout.cshtml";
+}
+
+<div class="grid grid-cols-1 md:grid-cols-12 gap-lg">
+    @Html.Action("MessageListMenu", "WriterPanelMessage")
+
+    <div class="md:col-span-9">
+        <h1 class="font-headline-md text-headline-md text-nude-pink-text mb-lg">Çöp Kutusu</h1>
+
+        @if (Model == null || Model.Count == 0)
+        {
+            <div class="bg-surface-container-lowest rounded-xl p-lg text-center text-on-surface-variant">Çöp kutusu boş.</div>
+        }
+        <div class="flex flex-col gap-sm">
+            @foreach (var item in Model)
+            {
+                <div class="bg-surface-container-lowest rounded-xl p-lg shadow-[0_4px_16px_rgba(75,64,56,0.06)]">
+                    <div class="flex items-center gap-md">
+                        <div class="w-10 h-10 rounded-full flex items-center justify-center bg-nude-pink-bg text-nude-pink-text font-label-md shrink-0">
+                            <span class="material-symbols-outlined text-[20px]">delete</span>
+                        </div>
+                        <div class="block" style="flex:1 1 auto; overflow:hidden;">
+                            <div class="font-label-md text-on-surface" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                                @item.SenderMail → @item.ReceiverMail
+                            </div>
+                            <div class="text-on-surface-variant text-label-sm" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">@item.Subject</div>
+                        </div>
+                        <span class="text-label-sm text-outline shrink-0 hidden md:block">@(((DateTime)item.MessageDate).ToString("dd-MM-yyyy"))</span>
+                        <div class="flex items-center gap-sm shrink-0">
+                            <a href="/WriterPanelMessage/RestoreMessage/@item.MessageID"
+                               class="flex items-center px-md py-2 border border-nude-green-border text-nude-green-text rounded-full hover:bg-nude-green-bg transition-all" title="Geri Yükle">
+                                <span class="material-symbols-outlined text-[18px]">restore</span>
+                            </a>
+                            <a href="/WriterPanelMessage/DeletePermanent/@item.MessageID"
+                               onclick="return confirm('DİKKAT: Bu mesaj kalıcı olarak silinecek ve geri getirilemeyecek. Emin misiniz?');"
+                               class="flex items-center px-md py-2 border border-nude-pink-border text-nude-pink-text rounded-full hover:bg-nude-pink-bg transition-all" title="Kalıcı Sil">
+                                <span class="material-symbols-outlined text-[18px]">delete_forever</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

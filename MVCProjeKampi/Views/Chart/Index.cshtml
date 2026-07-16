@@ -1,0 +1,89 @@
+﻿@{
+    ViewBag.Title = "Grafikler";
+    Layout = "~/Views/Shared/_adminLayout.cshtml";
+}
+
+<div class="flex flex-col gap-lg">
+    <h2 class="font-headline-md text-headline-md text-primary">Grafikler</h2>
+
+    <!-- 1) Kategori - Başlık dağılımı -->
+    <div class="bg-surface-container-lowest rounded-xl p-lg border-4 border-nude-lila-border shadow-[0_4px_16px_rgba(75,64,56,0.06)]">
+        <h3 class="font-headline-sm text-headline-sm text-on-surface mb-md">Kategorilere Göre Başlık Dağılımı</h3>
+        <div id="pieChart" style="width:100%; height:340px;"></div>
+        <p class="text-on-surface-variant text-label-sm" style="text-align:center; margin-top:8px;">
+            Sözlükteki aktif başlıkların hangi kategorilerde yoğunlaştığını gösterir. Dilim büyüklüğü o kategorideki başlık sayısıyla orantılıdır.
+        </p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-lg">
+        <!-- 2) Kategori - Entry sayısı -->
+        <div class="bg-surface-container-lowest rounded-xl p-lg border-4 border-nude-green-border shadow-[0_4px_16px_rgba(75,64,56,0.06)]">
+            <h3 class="font-headline-sm text-headline-sm text-on-surface mb-md">Kategorilere Göre Entry Sayısı</h3>
+            <div id="barChart" style="width:100%; height:300px;"></div>
+            <p class="text-on-surface-variant text-label-sm" style="text-align:center; margin-top:8px;">
+                Her kategorideki başlıklara yazılan toplam entry sayısı. Hangi konuların daha çok konuşulduğunu gösterir.
+            </p>
+        </div>
+
+        <!-- 3) Yazar - Entry sayısı -->
+        <div class="bg-surface-container-lowest rounded-xl p-lg border-4 border-nude-blue-border shadow-[0_4px_16px_rgba(75,64,56,0.06)]">
+            <h3 class="font-headline-sm text-headline-sm text-on-surface mb-md">En Aktif Yazarlar</h3>
+            <div id="writerChart" style="width:100%; height:300px;"></div>
+            <p class="text-on-surface-variant text-label-sm" style="text-align:center; margin-top:8px;">
+                En çok entry yazan ilk 6 yazar. Sözlüğün en üretken kalemlerini gösterir.
+            </p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+        var nudeRenkler = ['#B8D0B4', '#EAC7A8', '#EFDDA9', '#BCD3DE', '#E6C3C1', '#CFC0D8'];
+        var ortakSecenek = {
+            backgroundColor: 'transparent',
+            colors: nudeRenkler,
+            fontName: 'Nunito Sans',
+            legend: { textStyle: { color: '#434841' } },
+            chartArea: { width: '85%', height: '75%' }
+        };
+
+        google.charts.load('current', { packages: ['corechart'] });
+        google.charts.setOnLoadCallback(hepsiniCiz);
+
+        function veriCek(url, callback) {
+            fetch(url).then(function (r) { return r.json(); }).then(callback);
+        }
+
+        function tabloYap(sonuc, sutunAdi) {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Ad');
+            data.addColumn('number', sutunAdi);
+            var satirlar = [];
+            sonuc.forEach(function (o) { satirlar.push([o.CategoryName, o.CategoryCount]); });
+            data.addRows(satirlar);
+            return data;
+        }
+
+        function hepsiniCiz() {
+            // Pie
+            veriCek('/Chart/CategoryChart', function (sonuc) {
+                var data = tabloYap(sonuc, 'Başlık');
+                var opt = Object.assign({}, ortakSecenek, { pieHole: 0.4 });
+                new google.visualization.PieChart(document.getElementById('pieChart')).draw(data, opt);
+            });
+            // Kategori - entry (bar)
+            veriCek('/Chart/CategoryEntryChart', function (sonuc) {
+                var data = tabloYap(sonuc, 'Entry');
+                var opt = Object.assign({}, ortakSecenek, { legend: { position: 'none' }, bar: { groupWidth: '55%' } });
+                new google.visualization.ColumnChart(document.getElementById('barChart')).draw(data, opt);
+            });
+            // Yazar - entry (bar)
+            veriCek('/Chart/WriterChart', function (sonuc) {
+                var data = tabloYap(sonuc, 'Entry');
+                var opt = Object.assign({}, ortakSecenek, { legend: { position: 'none' }, bar: { groupWidth: '55%' } });
+                new google.visualization.BarChart(document.getElementById('writerChart')).draw(data, opt);
+            });
+        }
+    </script>
+}

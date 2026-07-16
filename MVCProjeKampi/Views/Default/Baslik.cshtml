@@ -1,0 +1,212 @@
+﻿
+@using EntityLayer.Concrete
+@using PagedList
+@model IPagedList<Content>
+
+@{
+    ViewBag.Title = "Başlık";
+    Layout = Session["WriterMail"] != null
+     ? "~/Views/Shared/_WriterLayout.cshtml"
+     : "~/Views/Shared/_vitrinLayout.cshtml";
+    var heading = ViewBag.Heading as Heading;
+    var writerNames = ViewBag.WriterNames as Dictionary<int, string>;
+    var categories = ViewBag.Categories as List<Category>;
+}
+@functions {
+    public static string NudeChip(int index)
+    {
+        string[] renkler = {
+            "bg-nude-green-bg text-nude-green-text","bg-nude-orange-bg text-nude-orange-text",
+            "bg-nude-yellow-bg text-nude-yellow-text","bg-nude-blue-bg text-nude-blue-text",
+            "bg-nude-pink-bg text-nude-pink-text","bg-nude-lila-bg text-nude-lila-text"
+        };
+        return renkler[index % renkler.Length];
+    }
+    // Yazar ismi rengi (WriterID'ye göre sabit)
+    public static string YazarTextRenk(int id)
+    {
+        string[] r = { "text-nude-green-text", "text-nude-orange-text", "text-nude-yellow-text", "text-nude-blue-text", "text-nude-pink-text", "text-nude-lila-text" };
+        return r[id % r.Length];
+    }
+    // Avatar çerçeve + arka plan rengi (aynı WriterID -> aynı renk)
+    public static string YazarAvatarRenk(int id)
+    {
+        string[] r = { "border-nude-green-border bg-nude-green-bg", "border-nude-orange-border bg-nude-orange-bg", "border-nude-yellow-border bg-nude-yellow-bg", "border-nude-blue-border bg-nude-blue-bg", "border-nude-pink-border bg-nude-pink-bg", "border-nude-lila-border bg-nude-lila-bg" };
+        return r[id % r.Length];
+    }
+    // Kategori çerçeve rengi (CategoryID'ye göre sabit)
+    public static string KategoriBorderRenk(int id)
+    {
+        string[] r = {
+    "border-nude-green-border","border-nude-orange-border","border-nude-yellow-border",
+    "border-nude-blue-border","border-nude-pink-border","border-nude-lila-border"
+};
+        return r[id % r.Length];
+    }
+    // Kategori düz arka plan rengi (şerit/nokta için)
+    public static string KategoriBgRenk(int id)
+    {
+        string[] r = { "bg-nude-green", "bg-nude-orange", "bg-nude-yellow", "bg-nude-blue", "bg-nude-pink", "bg-nude-lila" };
+        return r[id % r.Length];
+    }
+}
+
+
+<div class="grid grid-cols-1 md:grid-cols-12 gap-lg">
+
+    <!-- SOL: Gündem -->
+    <aside class="md:col-span-3 hidden md:flex flex-col gap-lg h-fit sticky top-24 min-w-0">
+        <div class="bg-surface-container-lowest rounded-xl p-lg shadow-[0_4px_16px_rgba(75,64,56,0.06)] min-w-0">
+            <div class="flex items-center gap-sm mb-lg">
+                <span class="material-symbols-outlined text-primary">trending_up</span>
+                <h2 class="font-headline-sm text-headline-sm text-on-surface">Gündem</h2>
+            </div>
+            <ul class="space-y-md">
+                @{
+                    var trending = ViewBag.Trending as List<Heading>;
+                    var tcounts = ViewBag.TrendingCounts as Dictionary<int, int>;
+                }
+                @foreach (var t in trending)
+                {
+                    var tc = (tcounts != null && tcounts.ContainsKey(t.HeadingID)) ? tcounts[t.HeadingID] : 0;
+                    <li class="min-w-0">
+                        <a class="flex items-stretch gap-sm group" href="/Default/Baslik/@t.HeadingID">
+                            <span class="w-1 rounded-full shrink-0 @KategoriBgRenk(t.CategoryID)"></span>
+                            <span class="min-w-0">
+                                <span class="block font-body-md text-on-surface hover:text-primary transition-colors break-words">@t.HeadingName</span>
+                                <span class="block text-label-sm text-outline">@tc entry</span>
+                            </span>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </aside>
+
+    <!-- ORTA: Başlık kutusu + entry akışı -->
+    <section class="md:col-span-6 flex flex-col gap-lg min-w-0">
+
+        <!-- LİLA ÇERÇEVELİ BAŞLIK KUTUSU (sticky) -->
+        <div class="bg-surface-container-lowest rounded-xl p-lg border-4 @(heading != null ? KategoriBorderRenk(heading.CategoryID) : "border-primary") sticky top-20 z-30">
+            <h1 class="font-headline-md text-headline-md text-primary break-words">@(heading != null ? heading.HeadingName : "")</h1>
+            <div class="flex items-center gap-md mt-sm">
+                <span class="flex items-center gap-xs text-on-surface-variant">
+                    <span class="material-symbols-outlined text-[18px]">forum</span>
+                    <span class="font-label-md">@Model.TotalItemCount entry</span>
+                </span>
+            </div>
+        </div>
+
+        <!-- ENTRY AKIŞI -->
+        @if (Model.TotalItemCount == 0)
+        {
+            <div class="bg-surface-container-lowest rounded-xl p-lg text-center text-on-surface-variant">
+                Bu başlıkta henüz entry yok. İlk yazan sen ol!
+            </div>
+        }
+        @foreach (var item in Model)
+        {
+            var wid = item.WriterID ?? 0;
+            var author = (item.WriterID != null && writerNames != null && writerNames.ContainsKey(item.WriterID.Value))
+                ? writerNames[item.WriterID.Value] : "anonim";
+            var writerObj = (ViewBag.Writers as List<Writer>)?.FirstOrDefault(w => w.WriterID == wid);
+            var img = writerObj != null ? writerObj.WriterImage : null;
+            var basHarf = !string.IsNullOrEmpty(author) ? author.Substring(0, 1).ToUpper() : "?";
+            <article class="bg-surface-container-lowest rounded-xl p-lg shadow-[0_4px_16px_rgba(75,64,56,0.06)]">
+                <p class="font-body-lg text-on-surface leading-relaxed mb-md break-words">@item.ContentValue</p>
+                <div class="flex items-center justify-between border-t border-[#EFE6DD] pt-md">
+                    <div class="flex items-center gap-sm">
+                        @if (!string.IsNullOrEmpty(img))
+                        {
+                            <img src="@img" alt="@author" class="w-9 h-9 rounded-full object-cover border-2 @YazarAvatarRenk(wid)" />
+                        }
+                        else
+                        {
+                            <div class="w-9 h-9 rounded-full flex items-center justify-center border-2 font-label-md @YazarAvatarRenk(wid) @YazarTextRenk(wid)">@basHarf</div>
+                        }
+                        <div class="flex flex-col">
+                            <span class="font-label-md @YazarTextRenk(wid)">@author</span>
+                            <span class="text-label-sm text-outline">@item.ContentDate.ToShortDateString()</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-md">
+                        <a href="/Default/Like/@item.ContentID?headingId=@ViewBag.HeadingId" class="flex items-center gap-xs text-outline hover:text-primary transition-colors">
+                            <span class="material-symbols-outlined text-[20px]">thumb_up</span>
+                            <span class="text-label-sm">@item.LikeCount</span>
+                        </a>
+                        <a href="/Default/Dislike/@item.ContentID?headingId=@ViewBag.HeadingId" class="flex items-center gap-xs text-outline hover:text-error transition-colors">
+                            <span class="material-symbols-outlined text-[20px]">thumb_down</span>
+                            <span class="text-label-sm">@item.DislikeCount</span>
+                        </a>
+                    </div>
+                </div>
+            </article>
+        }
+        @if (TempData["EntryHata"] != null)
+        {
+            <div class="bg-nude-pink-bg text-nude-pink-text rounded-xl p-md font-label-md text-center">@TempData["EntryHata"]</div>
+        }
+
+        <!-- ENTRY YAZ -->
+        @if (Session["WriterMail"] != null)
+        {
+            <form action="/Default/EntryEkle" method="post" class="bg-surface-container-lowest rounded-xl p-lg shadow-[0_4px_16px_rgba(75,64,56,0.06)]">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="headingId" value="@ViewBag.HeadingId" />
+                <textarea name="contentValue" rows="3" placeholder="bu başlığa bir şeyler yaz..."
+                          class="w-full p-md bg-surface-container-lowest border border-[#EFE6DD] rounded-xl font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"></textarea>
+                <div class="flex justify-end mt-md">
+                    <button type="submit" class="px-lg py-2 bg-primary text-on-primary font-label-md rounded-full hover:brightness-110 transition-all">Gönder</button>
+                </div>
+            </form>
+        }
+        else
+        {
+            <div class="bg-surface-container-lowest rounded-xl p-lg text-center text-on-surface-variant">
+                Entry yazmak için <a href="/Login/WriterLogin" class="text-primary font-label-md">giriş yap</a>.
+            </div>
+        }
+    </section>
+
+    <!-- SAĞ: Kategoriler + İstatistikler (sticky) -->
+    <aside class="md:col-span-3 hidden md:flex flex-col gap-lg h-fit sticky top-24 min-w-0">
+        <div class="bg-surface-container-lowest rounded-xl p-lg shadow-[0_4px_16px_rgba(75,64,56,0.06)] min-w-0">
+            <h2 class="font-headline-sm text-headline-sm text-on-surface mb-lg">Kategoriler</h2>
+            <div class="flex flex-wrap gap-sm">
+
+                @foreach (var cat in categories)
+                {
+                    <a href="/Default/Kategori/@cat.CategoryID" class="px-4 py-1.5 @NudeChip(cat.CategoryID) font-label-md rounded-full whitespace-nowrap max-w-full truncate">@cat.CategoryName</a>
+
+                }
+            </div>
+        </div>
+
+        <div class="bg-surface-container-lowest rounded-xl p-lg shadow-[0_4px_16px_rgba(75,64,56,0.06)] border border-primary/10 min-w-0">
+            <h2 class="font-headline-sm text-headline-sm text-on-surface mb-lg">İstatistikler</h2>
+            <div class="grid grid-cols-1 gap-sm">
+                <div class="bg-nude-green-bg rounded-xl p-md flex items-center justify-between">
+                    <div class="flex items-center gap-sm">
+                        <span class="material-symbols-outlined text-nude-green-text">article</span>
+                        <span class="font-label-md text-nude-green-text">Başlık</span>
+                    </div>
+                    <span class="font-headline-sm text-nude-green-text">@ViewBag.TotalHeadings</span>
+                </div>
+                <div class="bg-nude-orange-bg rounded-xl p-md flex items-center justify-between">
+                    <div class="flex items-center gap-sm">
+                        <span class="material-symbols-outlined text-nude-orange-text">chat</span>
+                        <span class="font-label-md text-nude-orange-text">Entry</span>
+                    </div>
+                    <span class="font-headline-sm text-nude-orange-text">@ViewBag.TotalEntries</span>
+                </div>
+                <div class="bg-nude-blue-bg rounded-xl p-md flex items-center justify-between">
+                    <div class="flex items-center gap-sm">
+                        <span class="material-symbols-outlined text-nude-blue-text">group</span>
+                        <span class="font-label-md text-nude-blue-text">Yazar</span>
+                    </div>
+                    <span class="font-headline-sm text-nude-blue-text">@ViewBag.TotalWriters</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+</div>

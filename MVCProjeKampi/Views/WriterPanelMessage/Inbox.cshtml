@@ -1,0 +1,63 @@
+﻿@using EntityLayer.Concrete
+@model List<Message>
+@{
+    ViewBag.Title = "Gelen Kutusu";
+    Layout = "~/Views/Shared/_WriterLayout.cshtml";
+}
+
+<div class="grid grid-cols-1 md:grid-cols-12 gap-lg">
+    @Html.Action("MessageListMenu", "WriterPanelMessage")
+
+    <div class="md:col-span-9">
+        <h1 class="font-headline-md text-headline-md text-primary mb-lg">Gelen Kutusu</h1>
+
+        @if (Model == null || Model.Count == 0)
+        {
+            <div class="bg-surface-container-lowest rounded-xl p-lg text-center text-on-surface-variant">Gelen mesajın yok.</div>
+        }
+        <div class="flex flex-col gap-sm">
+            @foreach (var item in Model)
+            {
+                <div class="bg-surface-container-lowest rounded-xl p-lg shadow-[0_4px_16px_rgba(75,64,56,0.06)]">
+                    <div class="flex items-center gap-md">
+                        <!-- Avatar -->
+                        @{
+                            var writerImages = ViewBag.WriterImages as Dictionary<string, string>;
+                            string foto = (writerImages != null && item.SenderMail != null && writerImages.ContainsKey(item.SenderMail)) ? writerImages[item.SenderMail] : null;
+                        }
+                        @if (!string.IsNullOrEmpty(foto))
+                        {
+                            <img src="@foto" alt="@item.SenderMail" class="w-10 h-10 rounded-full object-cover border-2 border-nude-blue-border shrink-0" />
+                        }
+                        else
+                        {
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center bg-nude-blue-bg text-nude-blue-text font-label-md shrink-0">
+                                @(!string.IsNullOrEmpty(item.SenderMail) ? item.SenderMail.Substring(0,1).ToUpper() : "?")
+                            </div>
+                        }
+                        <!-- Gönderen + konu -->
+                        <a href="/WriterPanelMessage/GetInboxMessageDetails/@item.MessageID" class="block" style="flex:1 1 auto; overflow:hidden;">
+                            <div class="text-on-surface @(item.MessageStatus == false ? "font-bold" : "font-label-md")" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                                @if (item.MessageStatus == false)
+                                {
+                                    <span class="inline-block w-2 h-2 rounded-full bg-primary" style="vertical-align:middle; margin-right:6px;"></span>
+                                }
+                                @item.SenderMail
+                            </div>
+                            <div class="text-label-sm @(item.MessageStatus == false ? "text-on-surface font-bold" : "text-on-surface-variant")" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">@item.Subject</div>
+                        </a>
+                        <!-- Tarih -->
+                        <span class="text-label-sm text-outline shrink-0 hidden md:block">@(((DateTime)item.MessageDate).ToString("dd-MM-yyyy"))</span>
+
+                        <!-- Çöpe at -->
+                        <a href="/WriterPanelMessage/MoveToTrash/@item.MessageID?from=Inbox"
+                           onclick="return confirm('Bu mesajı çöp kutusuna taşımak istediğinize emin misiniz?');"
+                           class="flex items-center px-md py-2 border border-nude-pink-border text-nude-pink-text rounded-full hover:bg-nude-pink-bg transition-all shrink-0">
+                            <span class="material-symbols-outlined text-[18px]">delete</span>
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

@@ -1,0 +1,81 @@
+﻿@model EntityLayer.Concrete.Writer
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kayıt Ol - Tatlı Sözlük</title>
+    <link href="~/Content/tailwind.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&family=Nunito+Sans:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+</head>
+<body class="font-body-md text-on-surface antialiased" style="min-height:100vh; margin:0; display:flex; flex-direction:column; background-color:#FBF7F3;">
+
+    <!-- ÜST: Logo (ortalı, büyük) -->
+    <header style="padding:32px 40px; text-align:center;">
+        <a href="/Default/HomePage" style="display:inline-flex; align-items:center; gap:10px; text-decoration:none;">
+            <span class="material-symbols-outlined text-primary" style="font-size:44px;">menu_book</span>
+            <span class="font-headline-md font-bold text-primary" style="font-size:34px;">Tatlı Sözlük</span>
+        </a>
+    </header>
+
+    <!-- ORTA: Kayıt kartı -->
+    <main style="flex:1; display:flex; align-items:center; justify-content:center; padding:24px;">
+        <div class="bg-surface-container-lowest border-4 border-nude-lila-border shadow-[0_4px_16px_rgba(75,64,56,0.06)]"
+             style="width:100%; max-width:520px; border-radius:20px; padding:40px;">
+
+            <h1 class="font-headline-md" style="color:#8A6440; font-size:28px; text-align:center; margin:0 0 28px 0;">Aramıza katıl</h1>
+
+            @if (ViewBag.Hata != null)
+            {
+                <div class="bg-nude-pink-bg text-nude-pink-text font-label-md" style="border-radius:12px; padding:14px; margin-bottom:18px; text-align:center;">@ViewBag.Hata</div>
+            }
+
+            @using (Html.BeginForm("WriterRegister", "WriterPanel", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <div style="display:flex; flex-direction:column; gap:18px;">
+                    <div style="display:flex; gap:14px;">
+                        <input name="WriterName" required placeholder="Adın"
+                               class="border border-[#EFE6DD] font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                               style="width:100%; box-sizing:border-box; border-radius:12px; padding:15px 16px;" />
+                        <input name="WriterSurname" required placeholder="Soyadın"
+                               class="border border-[#EFE6DD] font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                               style="width:100%; box-sizing:border-box; border-radius:12px; padding:15px 16px;" />
+                    </div>
+                    <div style="position:relative;">
+                        <span class="material-symbols-outlined text-outline" style="position:absolute; left:16px; top:50%; transform:translateY(-50%); font-size:22px;">mail</span>
+                        <input name="WriterMail" type="email" required placeholder="Mail adresin"
+                               class="border border-[#EFE6DD] font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                               style="width:100%; box-sizing:border-box; border-radius:12px; padding:15px 16px 15px 50px;" />
+                    </div>
+                    <div style="position:relative;">
+                        <span class="material-symbols-outlined text-outline" style="position:absolute; left:16px; top:50%; transform:translateY(-50%); font-size:22px;">lock</span>
+                        <input name="WriterPassword" type="password" required placeholder="Şifren"
+                               class="border border-[#EFE6DD] font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                               style="width:100%; box-sizing:border-box; border-radius:12px; padding:15px 16px 15px 50px;" />
+                    </div>
+                    <div style="position:relative;">
+                        <span class="material-symbols-outlined text-outline" style="position:absolute; left:16px; top:50%; transform:translateY(-50%); font-size:22px;">lock</span>
+                        <input name="WriterPasswordAgain" type="password" required placeholder="Şifren (tekrar)"
+                               class="border border-[#EFE6DD] font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                               style="width:100%; box-sizing:border-box; border-radius:12px; padding:15px 16px 15px 50px;" />
+                    </div>
+                    <button type="submit" class="bg-primary text-on-primary font-label-md hover:brightness-110 transition-all"
+                            style="width:100%; box-sizing:border-box; border:none; border-radius:9999px; padding:15px; cursor:pointer; font-size:15px;">
+                        Kayıt Ol
+                    </button>
+                </div>
+            }
+
+            <p style="text-align:center; margin:24px 0 0 0;" class="text-on-surface-variant font-label-md">
+                Zaten hesabın var mı?
+                <a href="/Login/WriterLogin" class="text-primary font-label-md" style="text-decoration:none;">Giriş Yap</a>
+            </p>
+        </div>
+    </main>
+</body>
+</html>

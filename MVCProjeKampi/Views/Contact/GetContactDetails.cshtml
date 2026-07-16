@@ -1,0 +1,43 @@
+﻿@model EntityLayer.Concrete.Contact
+@{
+    ViewBag.Title = "Mesaj Detayı";
+    Layout = "~/Views/Shared/_adminLayout.cshtml";
+}
+
+<div class="max-w-3xl mx-auto flex flex-col gap-lg">
+    <div class="flex items-center justify-between">
+        <h2 class="font-headline-md text-headline-md text-primary">Mesaj Detayı</h2>
+        <a href="/Contact/Index" class="flex items-center gap-xs px-lg py-2 border border-[#EFE6DD] text-on-surface-variant font-label-md rounded-full hover:bg-surface-container transition-all">
+            <span class="material-symbols-outlined text-[18px]">arrow_back</span> Geri
+        </a>
+    </div>
+
+    <div class="bg-surface-container-lowest rounded-xl border-4 border-nude-blue-border shadow-[0_4px_16px_rgba(75,64,56,0.06)] overflow-hidden">
+        <!-- Başlık kısmı -->
+        <div class="p-lg border-b border-[#EFE6DD]">
+            <h3 class="font-headline-sm text-headline-sm text-on-surface mb-md break-words">@Model.Subject</h3>
+            <div class="flex items-center gap-md">
+                <div class="w-11 h-11 rounded-full flex items-center justify-center bg-nude-blue-bg text-nude-blue-text font-label-md shrink-0">
+                    @(!string.IsNullOrEmpty(Model.UserName) ? Model.UserName.Substring(0,1).ToUpper() : "?")
+                </div>
+                <div class="min-w-0" style="flex:1 1 auto;">
+                    <div class="font-label-md text-on-surface break-words">@Model.UserName</div>
+                    <div class="text-label-sm text-outline break-words">@Model.UserMail</div>
+                </div>
+                <span class="text-label-sm text-outline shrink-0 hidden md:block">@Model.ContactDate.ToString("dd MMMM yyyy")</span>
+            </div>
+        </div>
+
+        <!-- Mesaj içeriği -->
+        <div class="p-lg">
+            <p class="font-body-lg text-on-surface leading-relaxed break-words" style="white-space:pre-wrap;">@Model.Message</p>
+        </div>
+
+        <!-- Alt işlem: yanıtla (mail linki) -->
+        <div class="p-lg border-t border-[#EFE6DD]">
+            <a href="mailto:@Model.UserMail?subject=RE: @Model.Subject" class="flex items-center gap-xs px-lg py-2 bg-primary text-on-primary font-label-md rounded-full hover:brightness-110 transition-all w-fit">
+                <span class="material-symbols-outlined text-[18px]">reply</span> Mail ile Yanıtla
+            </a>
+        </div>
+    </div>
+</div>

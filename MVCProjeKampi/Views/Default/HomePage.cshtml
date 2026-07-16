@@ -1,0 +1,173 @@
+﻿
+@using PagedList
+@model MVCProjeKampi.Models.VitrinHomeViewModel
+@{
+    ViewBag.Title = "Ana Sayfa";
+    Layout = Session["WriterMail"] != null
+     ? "~/Views/Shared/_WriterLayout.cshtml"
+     : "~/Views/Shared/_vitrinLayout.cshtml";
+
+}
+@functions {
+    public static string NudeChip(int index)
+    {
+        string[] renkler = {
+         "bg-nude-green-bg text-nude-green-text",
+         "bg-nude-orange-bg text-nude-orange-text",
+         "bg-nude-yellow-bg text-nude-yellow-text",
+         "bg-nude-blue-bg text-nude-blue-text",
+         "bg-nude-pink-bg text-nude-pink-text",
+         "bg-nude-lila-bg text-nude-lila-text"
+     };
+        return renkler[index % renkler.Length];
+    }
+    public static string KategoriBorderRenk(int id)
+    {
+        string[] r = {
+            "border-nude-green-border","border-nude-orange-border","border-nude-yellow-border",
+            "border-nude-blue-border","border-nude-pink-border","border-nude-lila-border"
+        };
+        return r[id % r.Length];
+    }
+    // Kategori düz arka plan rengi (şerit/nokta için)
+    public static string KategoriBgRenk(int id)
+    {
+        string[] r = { "bg-nude-green", "bg-nude-orange", "bg-nude-yellow", "bg-nude-blue", "bg-nude-pink", "bg-nude-lila" };
+        return r[id % r.Length];
+    }
+}
+<div class="grid grid-cols-1 md:grid-cols-12 gap-lg">
+
+    <!-- SOL: Gündem  -->
+    <aside class="md:col-span-3 hidden md:flex flex-col gap-lg h-fit sticky top-24 min-w-0">
+        <!-- Gündem -->
+        <div class="bg-surface-container-lowest rounded-xl p-lg shadow-[0_4px_16px_rgba(75,64,56,0.06)] min-w-0">
+            <div class="flex items-center gap-sm mb-lg">
+                <span class="material-symbols-outlined text-primary">trending_up</span>
+                <h2 class="font-headline-sm text-headline-sm text-on-surface">Gündem</h2>
+            </div>
+            <ul class="space-y-md">
+                @foreach (var item in Model.Trending)
+                {
+                    var c = Model.EntryCounts.ContainsKey(item.HeadingID) ? Model.EntryCounts[item.HeadingID] : 0;
+                    <li class="min-w-0">
+                        <a class="flex items-stretch gap-sm group" href="/Default/Baslik/@item.HeadingID">
+                            <span class="w-1 rounded-full shrink-0 @KategoriBgRenk(item.CategoryID)"></span>
+                            <span class="min-w-0">
+                                <span class="block font-body-md text-on-surface hover:text-primary transition-colors break-words">@item.HeadingName</span>
+                                <span class="block text-label-sm text-outline">@c entry</span>
+                            </span>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+
+
+    </aside>
+
+    <!-- ORTA: Başlık akışı -->
+    <section class="md:col-span-6 flex flex-col gap-lg">
+        @if (Model.Headings.TotalItemCount == 0)
+        {
+            <div class="bg-surface-container-lowest rounded-xl p-lg text-center text-on-surface-variant">Henüz başlık yok.</div>
+        }
+        @foreach (var item in Model.Headings)
+        {
+            var entryCount = Model.EntryCounts.ContainsKey(item.HeadingID) ? Model.EntryCounts[item.HeadingID] : 0;
+            var preview = Model.LatestEntry.ContainsKey(item.HeadingID) ? Model.LatestEntry[item.HeadingID] : "";
+            var catName = Model.CategoryNames.ContainsKey(item.CategoryID) ? Model.CategoryNames[item.CategoryID] : "";
+            <article class="bg-surface-container-lowest rounded-xl p-lg border-4 @KategoriBorderRenk(item.CategoryID) shadow-[0_4px_16px_rgba(75,64,56,0.06)] hover:shadow-md transition-shadow group">
+                <div class="flex justify-between items-start mb-md">
+                    <a href="/Default/Baslik/@item.HeadingID" class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors">@item.HeadingName</a>
+                </div>
+                @if (!string.IsNullOrEmpty(preview))
+                {
+                    <p class="font-body-md text-on-surface-variant leading-relaxed line-clamp-3 mb-lg">@preview</p>
+                }
+                <div class="flex items-center justify-between border-t border-[#EFE6DD] pt-md">
+                    <div class="flex items-center gap-sm">
+                        <span class="material-symbols-outlined text-outline text-[20px]">forum</span>
+                        <span class="font-label-md text-on-surface-variant">@entryCount entry</span>
+                    </div>
+                    @if (!string.IsNullOrEmpty(catName))
+                    {
+                        <span class="px-4 py-1.5 @NudeChip(item.CategoryID) font-label-md rounded-full">@catName</span>
+                    }
+                </div>
+            </article>
+        }
+
+        @if (Model.Headings.PageCount > 1)
+        {
+            <div class="flex items-center justify-center gap-sm mt-lg flex-wrap">
+                @if (Model.Headings.HasPreviousPage)
+                {
+                    <a href="@Url.Action("HomePage", new { page = Model.Headings.PageNumber - 1 })" class="px-3 py-2 rounded-full bg-surface-container-lowest border border-[#EFE6DD] text-on-surface hover:bg-primary/10 transition-colors flex items-center">
+                        <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+                    </a>
+                }
+                @for (int i = 1; i <= Model.Headings.PageCount; i++)
+                {
+                    if (i == Model.Headings.PageNumber)
+                    {
+                        <span class="px-4 py-2 rounded-full bg-primary text-on-primary font-label-md">@i</span>
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("HomePage", new { page = i })" class="px-4 py-2 rounded-full bg-surface-container-lowest border border-[#EFE6DD] text-on-surface hover:bg-primary/10 transition-colors font-label-md">@i</a>
+                    }
+                }
+                @if (Model.Headings.HasNextPage)
+                {
+                    <a href="@Url.Action("HomePage", new { page = Model.Headings.PageNumber + 1 })" class="px-3 py-2 rounded-full bg-surface-container-lowest border border-[#EFE6DD] text-on-surface hover:bg-primary/10 transition-colors flex items-center">
+                        <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+                    </a>
+                }
+            </div>
+        }
+    </section>
+
+
+
+    <aside class="md:col-span-3 hidden md:flex flex-col gap-lg h-fit sticky top-24">
+        <!-- Kategoriler -->
+        <div class="bg-surface-container-lowest rounded-xl p-lg shadow-[0_4px_16px_rgba(75,64,56,0.06)] min-w-0">
+            <h2 class="font-headline-sm text-headline-sm text-on-surface mb-lg">Kategoriler</h2>
+            <div class="flex flex-wrap gap-sm">
+
+                @foreach (var cat in Model.Categories)
+                {
+                    <a href="/Default/Kategori/@cat.CategoryID" class="px-4 py-1.5 @NudeChip(cat.CategoryID) font-label-md rounded-full whitespace-nowrap max-w-full truncate">@cat.CategoryName</a>
+
+                }
+            </div>
+        </div>
+        <div class="bg-surface-container-lowest rounded-xl p-lg shadow-[0_4px_16px_rgba(75,64,56,0.06)] border border-primary/10 min-w-0">
+            <h2 class="font-headline-sm text-headline-sm text-on-surface mb-lg">İstatistikler</h2>
+            <div class="grid grid-cols-1 gap-sm">
+                <div class="bg-nude-green-bg rounded-xl p-md flex items-center justify-between">
+                    <div class="flex items-center gap-sm">
+                        <span class="material-symbols-outlined text-nude-green-text">article</span>
+                        <span class="font-label-md text-nude-green-text">Başlık</span>
+                    </div>
+                    <span class="font-headline-sm text-nude-green-text">@Model.TotalHeadings</span>
+                </div>
+                <div class="bg-nude-orange-bg rounded-xl p-md flex items-center justify-between">
+                    <div class="flex items-center gap-sm">
+                        <span class="material-symbols-outlined text-nude-orange-text">chat</span>
+                        <span class="font-label-md text-nude-orange-text">Entry</span>
+                    </div>
+                    <span class="font-headline-sm text-nude-orange-text">@Model.TotalEntries</span>
+                </div>
+                <div class="bg-nude-blue-bg rounded-xl p-md flex items-center justify-between">
+                    <div class="flex items-center gap-sm">
+                        <span class="material-symbols-outlined text-nude-blue-text">group</span>
+                        <span class="font-label-md text-nude-blue-text">Yazar</span>
+                    </div>
+                    <span class="font-headline-sm text-nude-blue-text">@Model.TotalWriters</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+</div>

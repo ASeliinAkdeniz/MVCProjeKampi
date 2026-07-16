@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html>
+<html class="light" lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>@ViewBag.Title - Tatlı Sözlük</title>
+    <link href="~/Content/tailwind.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&family=Nunito+Sans:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+</head>
+<body class="font-body-md text-on-surface antialiased">
+
+    <header class="w-full top-0 sticky z-50 shadow-[0_4px_16px_rgba(75,64,56,0.06)] bg-surface">
+        <nav class="flex justify-between items-center h-16 px-gutter max-w-[1440px] mx-auto">
+            <a class="text-headline-md font-headline-md font-bold text-primary flex items-center gap-sm" href="/Default/HomePage">
+                <span class="material-symbols-outlined">menu_book</span>
+                Tatlı Sözlük
+            </a>
+            <div class="flex-1 max-w-xl mx-lg hidden md:block">
+                <form action="/Default/Search" method="get" class="relative">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">search</span>
+                    <input name="p" class="w-full pl-12 pr-4 py-2.5 bg-surface-container-lowest border border-[#EFE6DD] rounded-full font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="Başlık veya entry ara..." type="text" />
+                </form>
+            </div>
+            <div class="flex items-center gap-md">
+                <a class="px-lg py-2 bg-primary text-on-primary font-label-md rounded-full hover:brightness-110 transition-all" href="/Default/Hakkimizda">Hakkımızda</a>
+                <a class="px-lg py-2 border border-primary text-primary font-label-md rounded-full hover:bg-primary/10 transition-all" href="/Login/WriterLogin">Giriş Yap</a>
+                <a class="px-lg py-2 bg-primary text-on-primary font-label-md rounded-full hover:brightness-110 transition-all" href="/WriterPanel/WriterRegister">Kayıt Ol</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="max-w-[1440px] mx-auto px-gutter py-xl">
+        @RenderBody()
+    </main>
+
+    <footer class="mt-xxl bg-surface-container-low border-t border-[#EFE6DD]">
+        <div class="max-w-[1440px] mx-auto px-gutter py-xl flex flex-col md:flex-row justify-between items-center gap-lg">
+            <div class="flex flex-col items-center md:items-start gap-sm">
+                <span class="text-headline-sm font-bold text-primary">Tatlı Sözlük</span>
+                <p class="text-label-sm text-outline">© 2026 Tüm hakları saklıdır. Nezaket ve saygı esastır.</p>
+            </div>
+            <div class="flex flex-wrap justify-center gap-xl text-label-md text-on-surface-variant">
+                <a class="hover:text-primary transition-colors" href="/Default/Hakkimizda">Hakkımızda</a>
+                <a class="hover:text-primary transition-colors" href="/Default/Hakkimizda#iletisim">İletişim</a>
+                <a class="hover:text-primary transition-colors" href="/Default/HomePage">Başlıklar</a>
+                <a class="hover:text-primary transition-colors" href="/Login/WriterLogin">Giriş Yap</a>
+            </div>
+        </div>
+    </footer>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

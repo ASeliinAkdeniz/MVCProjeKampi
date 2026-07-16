@@ -1,0 +1,66 @@
+﻿@using EntityLayer.Concrete
+@model List<Admin>
+@{
+    ViewBag.Title = "Yetkilendirmeler";
+    Layout = "~/Views/Shared/_adminLayout.cshtml";
+}
+@functions {
+    public static string RolRenk(string rol)
+    {
+        switch (rol)
+        {
+            case "BasAdmin": return "bg-nude-lila-bg text-nude-lila-text";
+            case "Moderator": return "bg-nude-blue-bg text-nude-blue-text";
+            case "KategoriYoneticisi": return "bg-nude-green-bg text-nude-green-text";
+            case "YazarYoneticisi": return "bg-nude-orange-bg text-nude-orange-text";
+            case "DestekYoneticisi": return "bg-nude-pink-bg text-nude-pink-text";
+            case "IcerikEditoru": return "bg-nude-yellow-bg text-nude-yellow-text";
+            default: return "bg-surface-container text-on-surface-variant";
+        }
+    }
+}
+
+<div class="flex flex-col gap-lg">
+    <div class="flex items-center justify-between">
+        <h2 class="font-headline-md text-headline-md text-primary">Yetkilendirmeler</h2>
+        <a href="/Authorization/AddAdmin" class="flex items-center gap-xs px-lg py-2 bg-primary text-on-primary font-label-md rounded-full hover:brightness-110 transition-all">
+            <span class="material-symbols-outlined text-[18px]">person_add</span> Yeni Admin
+        </a>
+    </div>
+
+    <div class="bg-surface-container-lowest rounded-xl shadow-[0_4px_16px_rgba(75,64,56,0.06)] overflow-hidden">
+        <table class="w-full">
+            <thead>
+                <tr class="bg-nude-lila-bg text-nude-lila-text">
+                    <th class="text-left px-lg py-3 font-label-md">#</th>
+                    <th class="text-left px-lg py-3 font-label-md">Kullanıcı Adı</th>
+                    <th class="text-left px-lg py-3 font-label-md">Yetki</th>
+                    <th class="text-right px-lg py-3 font-label-md">İşlem</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr class="border-t border-[#EFE6DD] hover:bg-primary/5 transition-colors">
+                        <td class="px-lg py-3 text-outline">@item.AdminId</td>
+                        <td class="px-lg py-3 text-on-surface font-label-md break-words">@item.AdminUserName</td>
+                        <td class="px-lg py-3">
+                            <span class="px-3 py-1 rounded-full text-label-sm @RolRenk(item.AdminRole)">@item.AdminRole</span>
+                        </td>
+                        <td class="px-lg py-3">
+                            <div class="flex justify-end">
+                                <a href="/Authorization/EditAdmin/@item.AdminId" class="flex items-center gap-xs px-md py-1.5 border border-nude-orange-border text-nude-orange-text rounded-full hover:bg-nude-orange-bg transition-all text-label-sm">
+                                    <span class="material-symbols-outlined text-[16px]">edit</span> Yetkiyi Değiştir
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        @if (Model.Count == 0)
+        {
+            <div class="px-lg py-lg text-center text-on-surface-variant">Tanımlı admin yok.</div>
+        }
+    </div>
+</div>

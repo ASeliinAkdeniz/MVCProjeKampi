@@ -1,0 +1,56 @@
+﻿@model EntityLayer.Concrete.About
+@{
+    ViewBag.Title = "Hakkımızda Yönetimi";
+    Layout = "~/Views/Shared/_adminLayout.cshtml";
+}
+
+<div class="max-w-3xl mx-auto flex flex-col gap-lg">
+    <h2 class="font-headline-md text-headline-md text-primary">Hakkımızda Yönetimi</h2>
+
+    <div class="bg-surface-container-lowest rounded-xl p-lg border-4 border-nude-lila-border shadow-[0_4px_16px_rgba(75,64,56,0.06)]">
+        @using (Html.BeginForm("Index", "About", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(x => x.AboutID)
+            <div class="flex flex-col gap-md">
+                <div>
+                    <label class="block font-label-md text-on-surface-variant mb-xs">Birinci Paragraf</label>
+                    @Html.TextAreaFor(x => x.AboutDetails1, new { rows = 4, @class = "w-full px-4 py-2.5 bg-surface-container-lowest border border-[#EFE6DD] rounded-xl font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all", placeholder = "Hakkımızda metninin ilk kısmı..." })
+                </div>
+                <div>
+                    <label class="block font-label-md text-on-surface-variant mb-xs">İkinci Paragraf</label>
+                    @Html.TextAreaFor(x => x.AboutDetails2, new { rows = 4, @class = "w-full px-4 py-2.5 bg-surface-container-lowest border border-[#EFE6DD] rounded-xl font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all", placeholder = "Hakkımızda metninin ikinci kısmı..." })
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+                    <div>
+                        <label class="block font-label-md text-on-surface-variant mb-xs">1. Görsel Linki</label>
+                        @Html.TextBoxFor(x => x.AboutImage1, new { @class = "w-full px-4 py-2.5 bg-surface-container-lowest border border-[#EFE6DD] rounded-xl font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all", placeholder = "https://..." })
+                    </div>
+                    <div>
+                        <label class="block font-label-md text-on-surface-variant mb-xs">2. Görsel Linki</label>
+                        @Html.TextBoxFor(x => x.AboutImage2, new { @class = "w-full px-4 py-2.5 bg-surface-container-lowest border border-[#EFE6DD] rounded-xl font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all", placeholder = "https://..." })
+                    </div>
+                </div>
+
+                <!-- Görsel önizleme -->
+                @if (!string.IsNullOrEmpty(Model.AboutImage1) || !string.IsNullOrEmpty(Model.AboutImage2))
+                {
+                    <div class="flex gap-md flex-wrap">
+                        @if (!string.IsNullOrEmpty(Model.AboutImage1))
+                        {
+                            <img src="@Model.AboutImage1" alt="Görsel 1" class="w-32 h-32 rounded-xl object-cover border-4 border-nude-green-border" />
+                        }
+                        @if (!string.IsNullOrEmpty(Model.AboutImage2))
+                        {
+                            <img src="@Model.AboutImage2" alt="Görsel 2" class="w-32 h-32 rounded-xl object-cover border-4 border-nude-blue-border" />
+                        }
+                    </div>
+                }
+
+                <div class="flex justify-end mt-sm">
+                    <button type="submit" class="px-lg py-2.5 bg-primary text-on-primary font-label-md rounded-full hover:brightness-110 transition-all">Kaydet</button>
+                </div>
+            </div>
+        }
+    </div>
+</div>

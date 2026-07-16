@@ -1,0 +1,92 @@
+﻿<!DOCTYPE html>
+<html class="light" lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>@ViewBag.Title - Tatlı Sözlük</title>
+    <link href="~/Content/tailwind.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&family=Nunito+Sans:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+</head>
+<body class="font-body-md text-on-surface antialiased min-h-screen flex flex-col">
+
+    <header class="w-full top-0 sticky z-50 shadow-[0_4px_16px_rgba(75,64,56,0.06)] bg-surface">
+        <nav class="flex justify-between items-center h-16 px-gutter max-w-[1440px] mx-auto">
+            <!-- Logo -->
+            <a class="text-headline-md font-headline-md font-bold text-primary flex items-center gap-sm" href="/Default/HomePage">
+                <span class="material-symbols-outlined">menu_book</span>
+                Tatlı Sözlük
+            </a>
+
+            <!-- Arama -->
+            <div class="flex-1 max-w-xl mx-lg hidden md:block">
+                <form action="/Default/Search" method="get" class="relative">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">search</span>
+                    <input name="p" class="w-full pl-12 pr-4 py-2.5 bg-surface-container-lowest border border-[#EFE6DD] rounded-full font-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="Başlık veya entry ara..." type="text" />
+                </form>
+            </div>
+
+            <!-- Hesabım dropdown -->
+            <div class="flex items-center gap-md">
+                <a href="/WriterPanel/NewHeading" class="hidden md:flex items-center gap-xs px-lg py-2 bg-primary text-on-primary font-label-md rounded-full hover:brightness-110 transition-all">
+                    <span class="material-symbols-outlined text-[18px]">add</span> Yeni Başlık
+                </a>
+
+                <div class="relative" id="hesapMenu">
+                    <button type="button" onclick="document.getElementById('hesapDropdown').classList.toggle('hidden')"
+                            class="flex items-center gap-xs px-lg py-2 border border-primary text-primary font-label-md rounded-full hover:bg-primary/10 transition-all">
+                        <span class="material-symbols-outlined text-[18px]">account_circle</span>
+                        Hesabım
+                        <span class="material-symbols-outlined text-[18px]">expand_more</span>
+                    </button>
+
+                    <div id="hesapDropdown" class="hidden absolute right-0 mt-sm w-56 bg-surface-container-lowest rounded-xl border border-[#EFE6DD] shadow-[0_4px_16px_rgba(75,64,56,0.06)] overflow-hidden z-50">
+                        <a href="/WriterPanel/MyHeading" class="flex items-center gap-sm px-lg py-3 text-on-surface hover:bg-primary/10 transition-colors">
+                            <span class="material-symbols-outlined text-[20px] text-primary">article</span> Başlıklarım
+                        </a>
+                        <a href="/WriterPanelContent/MyContent" class="flex items-center gap-sm px-lg py-3 text-on-surface hover:bg-primary/10 transition-colors">
+                            <span class="material-symbols-outlined text-[20px] text-primary">chat</span> Entrylerim
+                        </a>
+                        <a href="/WriterPanelMessage/Inbox" class="flex items-center gap-sm px-lg py-3 text-on-surface hover:bg-primary/10 transition-colors">
+                            <span class="material-symbols-outlined text-[20px] text-primary">mail</span> Mesajlarım
+                        </a>
+                        <a href="/WriterPanel/WriterProfile" class="flex items-center gap-sm px-lg py-3 text-on-surface hover:bg-primary/10 transition-colors">
+                            <span class="material-symbols-outlined text-[20px] text-primary">person</span> Profilim
+                        </a>
+                        <div class="border-t border-[#EFE6DD]"></div>
+                        <a href="/Login/LogOut" class="flex items-center gap-sm px-lg py-3 text-nude-pink-text hover:bg-nude-pink-bg transition-colors">
+                            <span class="material-symbols-outlined text-[20px]">logout</span> Çıkış Yap
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="max-w-[1440px] mx-auto px-gutter py-xl w-full flex-1">
+        @RenderBody()
+    </main>
+
+    <footer class="mt-xxl bg-surface-container-low border-t border-[#EFE6DD]">
+        <div class="max-w-[1440px] mx-auto px-gutter py-xl flex flex-col md:flex-row justify-between items-center gap-lg">
+            <div class="flex flex-col items-center md:items-start gap-sm">
+                <span class="text-headline-sm font-bold text-primary">Tatlı Sözlük</span>
+                <p class="text-label-sm text-outline">© 2024 Yazar Paneli</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Dropdown dışına tıklayınca kapansın -->
+    <script>
+        document.addEventListener('click', function (e) {
+            var menu = document.getElementById('hesapMenu');
+            var dropdown = document.getElementById('hesapDropdown');
+            if (menu && dropdown && !menu.contains(e.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
+    </script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

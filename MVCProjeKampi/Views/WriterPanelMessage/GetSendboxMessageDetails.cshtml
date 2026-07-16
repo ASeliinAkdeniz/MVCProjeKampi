@@ -1,0 +1,50 @@
+﻿@model EntityLayer.Concrete.Message
+@{
+    ViewBag.Title = "Gönderilen Mesaj";
+    Layout = "~/Views/Shared/_WriterLayout.cshtml";
+    var writerImages = ViewBag.WriterImages as Dictionary<string, string>;
+    string foto = (writerImages != null && Model.ReceiverMail != null && writerImages.ContainsKey(Model.ReceiverMail)) ? writerImages[Model.ReceiverMail] : null;
+}
+<div class="grid grid-cols-1 md:grid-cols-12 gap-lg">
+    @Html.Action("MessageListMenu", "WriterPanelMessage")
+    <div class="md:col-span-9">
+        <div class="flex items-center justify-between mb-lg">
+            <h1 class="font-headline-md text-headline-md text-primary">Gönderilen Mesaj</h1>
+            <a href="/WriterPanelMessage/Sendbox" class="flex items-center gap-xs px-lg py-2 border border-[#EFE6DD] text-on-surface-variant font-label-md rounded-full hover:bg-surface-container transition-all">
+                <span class="material-symbols-outlined text-[18px]">arrow_back</span> Geri
+            </a>
+        </div>
+        <div class="bg-surface-container-lowest rounded-xl border-4 border-nude-green-border shadow-[0_4px_16px_rgba(75,64,56,0.06)] overflow-hidden">
+            <div class="p-lg border-b border-[#EFE6DD]">
+                <h2 class="font-headline-sm text-headline-sm text-on-surface mb-md break-words">@Model.Subject</h2>
+                <div class="flex items-center gap-md">
+                    @if (!string.IsNullOrEmpty(foto))
+                    {
+                        <img src="@foto" alt="@Model.ReceiverMail" class="w-11 h-11 rounded-full object-cover border-2 border-nude-green-border shrink-0" />
+                    }
+                    else
+                    {
+                        <div class="w-11 h-11 rounded-full flex items-center justify-center bg-nude-green-bg text-nude-green-text font-label-md shrink-0">
+                            @(!string.IsNullOrEmpty(Model.ReceiverMail) ? Model.ReceiverMail.Substring(0, 1).ToUpper() : "?")
+                        </div>
+                    }
+                    <div class="min-w-0" style="flex:1 1 auto;">
+                        <div class="text-label-sm text-outline">Kime:</div>
+                        <div class="font-label-md text-on-surface" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">@Model.ReceiverMail</div>
+                        <div class="text-label-sm text-outline">@(((DateTime)Model.MessageDate).ToString("dd MMMM yyyy"))</div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-lg">
+                <div class="font-body-lg text-on-surface leading-relaxed break-words" style="white-space:pre-wrap;">@Model.MessageContent</div>
+            </div>
+            <div class="p-lg border-t border-[#EFE6DD]">
+                <a href="/WriterPanelMessage/MoveToTrash/@Model.MessageID?from=Sendbox"
+                   onclick="return confirm('Bu mesajı çöp kutusuna taşımak istediğinize emin misiniz?');"
+                   class="flex items-center gap-xs px-lg py-2 border border-nude-pink-border text-nude-pink-text font-label-md rounded-full hover:bg-nude-pink-bg transition-all w-fit">
+                    <span class="material-symbols-outlined text-[18px]">delete</span> Çöpe At
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
